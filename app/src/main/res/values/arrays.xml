@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="nixie">
+        <item>@drawable/nixie0</item>
+        <item>@drawable/nixie1</item>
+        <item>@drawable/nixie2</item>
+        <item>@drawable/nixie3</item>
+        <item>@drawable/nixie4</item>
+        <item>@drawable/nixie5</item>
+        <item>@drawable/nixie6</item>
+        <item>@drawable/nixie7</item>
+        <item>@drawable/nixie8</item>
+        <item>@drawable/nixie9</item>
+    </array>
+</resources>
