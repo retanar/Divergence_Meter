@@ -1,36 +1,59 @@
 package com.vlprojects.divergence
 
+import android.annotation.SuppressLint
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.widget.RemoteViews
+import kotlin.random.Random
 
 class DivergenceWidget : android.appwidget.AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-        context.resources.obtainTypedArray(R.array.nixie)
-        // There may be multiple widgets active, so update all of them
-        for (appWidgetId in appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId)
-        }
+        appWidgetIds.forEach { updateAppWidget(context, appWidgetManager, it) }
     }
 
     companion object {
+        @SuppressLint("ResourceType")
         internal fun updateAppWidget(
-            context: Context, appWidgetManager: AppWidgetManager,
-            appWidgetId: Int
+            context: Context,
+            appWidgetManager: AppWidgetManager, appWidgetId: Int
         ) {
+            val nixie = context.resources.obtainTypedArray(R.array.nixieImage)
+            val tube = context.resources.obtainTypedArray(R.array.widgetTube)
+
             // Construct the RemoteViews object
             val views = RemoteViews(context.packageName, R.layout.divergence_widget)
-            views.setImageViewResource(R.id.imageView0, R.drawable.nixie1)
-            views.setImageViewResource(R.id.imageView1, R.drawable.nixie_dot)
-            views.setImageViewResource(R.id.imageView2, R.drawable.nixie0)
-            views.setImageViewResource(R.id.imageView3, R.drawable.nixie4)
-            views.setImageViewResource(R.id.imageView4, R.drawable.nixie8)
-            views.setImageViewResource(R.id.imageView5, R.drawable.nixie5)
-            views.setImageViewResource(R.id.imageView6, R.drawable.nixie9)
-            views.setImageViewResource(R.id.imageView7, R.drawable.nixie7)
+            views.setImageViewResource(R.id.tubeDot, R.drawable.nixie_dot)
+            val divergenceDigits = splitIntegerToDigits(generateRandomDivergence())
+            for (i in 0..6)
+                views.setImageViewResource(
+                    tube.getResourceId(i, 0),
+                    if (divergenceDigits[i] >= 0)
+                        nixie.getResourceId(divergenceDigits[i], 0)
+                    else R.drawable.nixie_minus
+                )
 
             appWidgetManager.updateAppWidget(appWidgetId, views)
+            nixie.recycle()
+            tube.recycle()
+        }
+
+        fun generateRandomDivergence() =
+            Random.nextInt(-1000000, 2000000)
+
+        // Some shit code: Fix it please
+        fun splitIntegerToDigits(int: Int): IntArray {
+            val digits = IntArray(7)
+            var integer = if (int >= 0) int else -int
+
+            for (i in 0..6) {
+                digits[i] = (integer % 10)
+                integer /= 10
+            }
+            if (int <= 0)
+                digits[6] = -1
+
+            return digits
         }
     }
 }
