@@ -18,7 +18,7 @@ class ExampleUnitTest {
     fun splitIntegerToDigits() {
         val int = -1234567
         val digits = ByteArray(7)
-        var integer = if (int >= 0) int else -int
+        var integer = int
 
         for (i in 0..6) {
             digits[i] = (integer % 10).toByte()
