@@ -5,21 +5,25 @@ import android.content.Context
 import android.widget.RemoteViews
 import kotlin.random.Random
 
-const val SHARED_FILENAME = "divergence_widget"
-const val SHARED_DIVERGENCE = "divergence_value"
+private const val SHARED_FILENAME = "divergence_widget"
+private const val SHARED_DIVERGENCE = "divergence_value"
+private const val DIVERGENCE_CHANGE_STEP = 100_000
+private const val ALPHA_WORLDLINE = 0
+private const val BETA_WORLDLINE = 1_000_000
+private const val OMEGA_WORLDLINE = -1_000_000
 
 class DivergenceWidget : android.appwidget.AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         val prefs = context.getSharedPreferences(SHARED_FILENAME, 0)
-        val newDivergence = generateRandomDivergence(prefs.getInt(SHARED_DIVERGENCE, 0))
-        val newDivergenceDigits = splitIntegerToDigits(newDivergence)
+        val newDiv = generateRandomDivergence(prefs.getInt(SHARED_DIVERGENCE, 0))
+        val newDivDigits = splitIntegerToDigits(newDiv)
 
         appWidgetIds.forEach {
-            updateAppWidget(context, appWidgetManager, it, newDivergenceDigits)
+            updateAppWidget(context, appWidgetManager, it, newDivDigits)
         }
 
-        prefs.edit().putInt(SHARED_DIVERGENCE, newDivergence).apply()
+        prefs.edit().putInt(SHARED_DIVERGENCE, newDiv).apply()
     }
 
     fun updateAppWidget(
@@ -49,16 +53,28 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         tube.recycle()
     }
 
-    fun generateRandomDivergence(currentDivergence: Int): Int {
-        var newDivergence = currentDivergence + Random.nextInt(-200000, 200000)
+    fun generateRandomDivergence(currentDiv: Int): Int {
+        /* Coefficient needed to lower the chance of going to new wordline
+         * How it works:
+         *  - equalize divergence to range [0;1_000_000)
+         *  - subtract half the maximum divergence to put in range [-500_000;+500_000)
+         *  - divide by specific number to create adding coefficient of half the step */
+        val coef = (when {
+            currentDiv >= BETA_WORLDLINE -> -BETA_WORLDLINE
+            currentDiv < ALPHA_WORLDLINE -> +BETA_WORLDLINE
+            else -> 0
+        } + currentDiv - 500_000) / -(BETA_WORLDLINE / DIVERGENCE_CHANGE_STEP)
 
-        while (newDivergence < -1000000 || newDivergence > 2000000)
-            if (newDivergence < -1000000)
-                newDivergence += Random.nextInt(200000)
-            else if (newDivergence > 2000000)
-                newDivergence -= Random.nextInt(200000)
+        var newDiv = currentDiv + Random.nextInt(-DIVERGENCE_CHANGE_STEP + coef, DIVERGENCE_CHANGE_STEP + coef)
+        //println("$currentDiv + ${coef - DIVERGENCE_CHANGE_STEP} + ${coef + DIVERGENCE_CHANGE_STEP}")
 
-        return newDivergence
+        while (newDiv < OMEGA_WORLDLINE || newDiv > 2_000_000)
+            if (newDiv < OMEGA_WORLDLINE)
+                newDiv += Random.nextInt(DIVERGENCE_CHANGE_STEP)
+            else if (newDiv > 2_000_000)
+                newDiv -= Random.nextInt(DIVERGENCE_CHANGE_STEP)
+
+        return newDiv
     }
 
     // Some shit code: Unfixable
