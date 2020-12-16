@@ -2,17 +2,20 @@ package com.vlprojects.divergence
 
 import org.junit.Test
 import org.junit.Assert.*
+import kotlin.math.absoluteValue
 
 class ExampleUnitTest {
     @Test
-    fun randomTest() {
+    fun testRandomizer() {
         val dw = DivergenceWidget()
-        var newDiv = 800_000
+        var newDiv = 500_000
+        var iteration = 0
         while (newDiv in 0..999999) {
             newDiv = dw.generateRandomDivergence(newDiv)
+            iteration++
             //print("$newDiv, ")
         }
-        println(newDiv)
+        println("$newDiv on iteration $iteration")
     }
 
     @Test
@@ -21,7 +24,7 @@ class ExampleUnitTest {
         val digits = ByteArray(7)
         var integer = int
 
-        for (i in 0..6) {
+        for (i in digits.indices) {
             digits[i] = (integer % 10).toByte()
             integer /= 10
         }
@@ -32,4 +35,5 @@ class ExampleUnitTest {
         digits.forEach { println(it) }
         //return digits
     }
+
 }

@@ -3,27 +3,52 @@ package com.vlprojects.divergence
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.widget.RemoteViews
+import kotlin.math.absoluteValue
 import kotlin.random.Random
 
 private const val SHARED_FILENAME = "divergence_widget"
 private const val SHARED_DIVERGENCE = "divergence_value"
-private const val DIVERGENCE_CHANGE_STEP = 100_000
 private const val ALPHA_WORLDLINE = 0
 private const val BETA_WORLDLINE = 1_000_000
 private const val OMEGA_WORLDLINE = -1_000_000
+private const val DIVERGENCE_CHANGE_STEP = 100_000
+private const val MAX_DIVERGENCE_COEFICIENT = DIVERGENCE_CHANGE_STEP / 4
 
 class DivergenceWidget : android.appwidget.AppWidgetProvider() {
 
+    // first launch action
+    // TODO: make it work from the first launch
+    override fun onEnabled(context: Context?) {
+        val prefs = context!!.getSharedPreferences(SHARED_FILENAME, 0)
+        with(prefs.edit()) {
+            putInt(
+                SHARED_DIVERGENCE,
+                Random.nextInt(OMEGA_WORLDLINE, BETA_WORLDLINE * 2)
+            )
+            apply()
+        }
+    }
+
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+        // Preferences usage HERE
         val prefs = context.getSharedPreferences(SHARED_FILENAME, 0)
-        val newDiv = generateRandomDivergence(prefs.getInt(SHARED_DIVERGENCE, 0))
+        val newDiv = generateRandomDivergence(
+            prefs.getInt(
+                SHARED_DIVERGENCE,
+                // Shitcode: initial divergence generation
+                OMEGA_WORLDLINE
+            )
+        )
         val newDivDigits = splitIntegerToDigits(newDiv)
 
         appWidgetIds.forEach {
             updateAppWidget(context, appWidgetManager, it, newDivDigits)
         }
 
-        prefs.edit().putInt(SHARED_DIVERGENCE, newDiv).apply()
+        with(prefs.edit()) {
+            putInt(SHARED_DIVERGENCE, newDiv)
+            apply()
+        }
     }
 
     fun updateAppWidget(
@@ -40,15 +65,18 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         views.setImageViewResource(R.id.tubeDot, R.drawable.nixie_dot)
 
         // Main logic
-        for (i in 0..6)
+        for (i in 0..6) {
             views.setImageViewResource(
                 tube.getResourceId(i, 0),
                 if (divergenceDigits[i] >= 0)
                     nixie.getResourceId(divergenceDigits[i], 0)
-                else R.drawable.nixie_minus
+                else
+                    R.drawable.nixie_minus
             )
+        }
 
         appWidgetManager.updateAppWidget(appWidgetId, views)
+
         nixie.recycle()
         tube.recycle()
     }
@@ -63,10 +91,10 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
             currentDiv >= BETA_WORLDLINE -> -BETA_WORLDLINE
             currentDiv < ALPHA_WORLDLINE -> +BETA_WORLDLINE
             else -> 0
-        } + currentDiv - 500_000) / -(BETA_WORLDLINE / DIVERGENCE_CHANGE_STEP)
+        } + currentDiv - 500_000) / -(BETA_WORLDLINE / 2 / MAX_DIVERGENCE_COEFICIENT)
 
         var newDiv = currentDiv + Random.nextInt(-DIVERGENCE_CHANGE_STEP + coef, DIVERGENCE_CHANGE_STEP + coef)
-        //println("$currentDiv + ${coef - DIVERGENCE_CHANGE_STEP} + ${coef + DIVERGENCE_CHANGE_STEP}")
+        // println("$currentDiv + (${coef - DIVERGENCE_CHANGE_STEP} ; ${coef + DIVERGENCE_CHANGE_STEP})")
 
         while (newDiv < OMEGA_WORLDLINE || newDiv > 2_000_000)
             if (newDiv < OMEGA_WORLDLINE)
@@ -77,12 +105,12 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         return newDiv
     }
 
-    // Some shit code: Unfixable
+    // Shitcode: Unfixable
     fun splitIntegerToDigits(int: Int): IntArray {
         val digits = IntArray(7)
-        var integer = if (int >= 0) int else -int
+        var integer = int.absoluteValue
 
-        for (i in 0..6) {
+        for (i in digits.indices) {
             digits[i] = (integer % 10)
             integer /= 10
         }
