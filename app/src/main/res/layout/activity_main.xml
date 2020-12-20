@@ -1,10 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_height="wrap_content"
-              android:layout_width="match_parent" android:orientation="vertical">
+              xmlns:tools="http://schemas.android.com/tools" android:layout_height="wrap_content"
+              android:layout_width="match_parent" android:orientation="vertical" android:layout_margin="8dp">
     <TextView
         android:text="Nothing to see here, huh?\nShould probably place a guide here how to make a widget"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" android:id="@+id/textView"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" android:textSize="20sp"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="20sp" android:layout_marginBottom="8dp"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" android:layout_marginBottom="8dp">
+        <TextView
+            android:text="Current divergence: "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/textView2"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="20sp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/divergenceText" android:layout_weight="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="20sp" tools:text="1.046596"/>
+    </LinearLayout>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberSigned|numberDecimal"
+        android:ems="10"
+        android:id="@+id/userDivergence" android:hint="Enter new divergence here" android:layout_marginBottom="16dp"/>
+    <Button
+        android:text="Change"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:id="@+id/changeDivergenceButton"/>
 </LinearLayout>
