@@ -5,7 +5,17 @@ import org.junit.Assert.*
 import kotlin.math.absoluteValue
 
 class ExampleUnitTest {
+
     @Test
+    fun constantsCheck() {
+        println("MILLION: $MILLION")
+        println("alpha range: $ALPHA_RANGE")
+        println("beta range:  $BETA_RANGE")
+        println("omega range: $OMEGA_RANGE")
+        println("all range: $ALL_RANGE")
+    }
+
+    // @Test
     fun testRandomizer() {
         val dw = DivergenceWidget()
         var newDiv = 500_000
@@ -17,23 +27,4 @@ class ExampleUnitTest {
         }
         println("$newDiv on iteration $iteration")
     }
-
-    @Test
-    fun splitIntegerToDigits() {
-        val int = -1234567
-        val digits = ByteArray(7)
-        var integer = int
-
-        for (i in digits.indices) {
-            digits[i] = (integer % 10).toByte()
-            integer /= 10
-        }
-
-        if (int <= 0)
-            digits[6] = -1
-
-        digits.forEach { println(it) }
-        //return digits
-    }
-
 }

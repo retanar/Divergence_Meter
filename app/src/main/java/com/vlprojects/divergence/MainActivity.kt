@@ -12,18 +12,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // TODO (somewhat done): show divergence in app
+        // TODO: improve design in app
         val prefs = getSharedPreferences(SHARED_FILENAME, 0)
         divergenceText.text = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE).toString()
 
         changeDivergenceButton.setOnClickListener {
             val userDiv = userDivergence.text.toString()
-            val userDivNumber = (userDiv.toDouble() * 1_000_000).roundToInt()
+            val userDivNumber = (userDiv.toDouble() * MILLION).roundToInt()
 
             if (userDiv.isBlank())
                 return@setOnClickListener
 
-            if (userDivNumber !in OMEGA_WORLDLINE..(2 * BETA_WORLDLINE)) {
+            if (userDivNumber !in ALL_RANGE) {
                 Toast.makeText(this, "Wrong value", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
