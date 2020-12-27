@@ -134,7 +134,7 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
             digits[i] = (integer % 10)
             integer /= 10
         }
-        if (number <= 0)
+        if (number < 0)
             digits[6] = -1
 
         return digits
