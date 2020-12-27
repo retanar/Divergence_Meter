@@ -13,7 +13,6 @@ private const val MAX_DIVERGENCE_COEFFICIENT = DIVERGENCE_CHANGE_STEP / 4
 
 class DivergenceWidget : android.appwidget.AppWidgetProvider() {
 
-    // first launch action
     override fun onEnabled(context: Context?) {
         val prefs = context!!.getSharedPreferences(SHARED_FILENAME, 0)
         val currentDiv = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
@@ -34,18 +33,20 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
     }
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-        // Preferences usage HERE
         val prefs = context.getSharedPreferences(SHARED_FILENAME, 0)
-        val newDiv = generateRandomDivergence(
-            prefs.getInt(
-                SHARED_DIVERGENCE,
-                Random.nextInt(ALL_RANGE)
-            )
+
+        // Firstly, apply saved divergence to the widgets,
+        // so that the divergence can be updated to a specific number
+        val currentDiv = prefs.getInt(
+            SHARED_DIVERGENCE,
+            Random.nextInt(ALL_RANGE)
         )
-        val newDivDigits = splitIntegerToDigits(newDiv)
+        val currentDivDigits = splitIntegerToDigits(currentDiv)
 
-        appWidgetIds.forEach { updateAppWidget(context, appWidgetManager, it, newDivDigits) }
+        appWidgetIds.forEach { updateAppWidget(context, appWidgetManager, it, currentDivDigits) }
 
+        // Secondly, save new divergence to shared prefs
+        val newDiv = generateRandomDivergence(currentDiv)
         with(prefs.edit()) {
             putInt(SHARED_DIVERGENCE, newDiv)
             apply()
@@ -60,6 +61,7 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         appWidgetId: Int,
         divergenceDigits: IntArray
     ) {
+        // TODO: this is not good if you have multiple widgets
         val nixie = context.resources.obtainTypedArray(R.array.nixieImage)
         val tube = context.resources.obtainTypedArray(R.array.widgetTube)
 
@@ -105,9 +107,9 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         )
 
         while (newDiv !in ALL_RANGE) {
-            if (newDiv < OMEGA_RANGE.first)
+            if (newDiv < ALL_RANGE.first)
                 newDiv += Random.nextInt(DIVERGENCE_CHANGE_STEP)
-            else if (newDiv > BETA_RANGE.last)
+            else if (newDiv > ALL_RANGE.last)
                 newDiv -= Random.nextInt(DIVERGENCE_CHANGE_STEP)
         }
 
@@ -119,10 +121,11 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
             in BETA_RANGE -> -MILLION
             in OMEGA_RANGE -> +MILLION
             else -> 0
-        } + currentDiv - 500_000) / -(MILLION / 2 / MAX_DIVERGENCE_COEFFICIENT)
+        } + currentDiv - 500_000) /
+                -(MILLION / 2 / MAX_DIVERGENCE_COEFFICIENT)
     }
 
-    // Shitcode
+    // idk if I should somehow simplify this
     private fun splitIntegerToDigits(number: Int): IntArray {
         val digits = IntArray(7)
         var integer = number.absoluteValue

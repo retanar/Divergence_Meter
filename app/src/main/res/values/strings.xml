@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Divergence meter</string>
     <string name="appwidget_text">1.048596</string>
+    <string name="next_divergence">Next divergence:</string>
+    <string name="hint_enter_new_divergence_here">Enter new divergence here</string>
+    <string name="change">Change</string>
+    <string name="placeholder">Should probably write a mini guide here on how to make a widget.
+        \nCan\'t display current divergence value, because reasons…
+    </string>
 </resources>
