@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        tools:srcCompat="@drawable/nixie1"/>
+        tools:srcCompat="@drawable/nixie_minus"/>
     <ImageView
         android:id="@+id/tubeDot"
         android:layout_width="wrap_content"
@@ -27,26 +27,26 @@
         android:id="@+id/tube4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1" tools:srcCompat="@drawable/nixie4"/>
+        android:layout_weight="1" tools:srcCompat="@drawable/nixie1"/>
     <ImageView
         android:id="@+id/tube3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1" tools:srcCompat="@drawable/nixie8"/>
+        android:layout_weight="1" tools:srcCompat="@drawable/nixie2"/>
     <ImageView
         android:id="@+id/tube2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1" tools:srcCompat="@drawable/nixie5"/>
+        android:layout_weight="1" tools:srcCompat="@drawable/nixie3"/>
     <ImageView
         android:id="@+id/tube1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1" tools:srcCompat="@drawable/nixie9"/>
+        android:layout_weight="1" tools:srcCompat="@drawable/nixie4"/>
     <ImageView
         android:id="@+id/tube0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1" tools:srcCompat="@drawable/nixie6"/>
+        android:layout_weight="1" tools:srcCompat="@drawable/nixie5"/>
 
 </LinearLayout>
