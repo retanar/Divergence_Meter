@@ -14,3 +14,6 @@ Normal view:
 With minus:
 
 ![minus preview](app/src/main/res/drawable-nodpi/appwidget_minus_preview.jpg)
+
+## Download
+https://github.com/retanar/Divergence_Meter/releases
