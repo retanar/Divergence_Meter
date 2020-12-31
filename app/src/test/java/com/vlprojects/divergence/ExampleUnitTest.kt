@@ -1,8 +1,6 @@
 package com.vlprojects.divergence
 
 import org.junit.Test
-import org.junit.Assert.*
-import kotlin.math.absoluteValue
 
 class ExampleUnitTest {
 
@@ -21,7 +19,7 @@ class ExampleUnitTest {
         var newDiv = 500_000
         var iteration = 0
         while (newDiv in 0..999999) {
-            newDiv = dw.generateRandomDivergence(newDiv)
+            newDiv = dw.generateBalancedRandomDivergence(newDiv)
             iteration++
             //print("$newDiv, ")
         }

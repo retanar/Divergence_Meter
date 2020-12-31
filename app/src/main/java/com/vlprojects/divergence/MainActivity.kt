@@ -19,9 +19,16 @@ class MainActivity : AppCompatActivity() {
 
         // TODO: improve design in app
         val prefs = getSharedPreferences(SHARED_FILENAME, 0)
-        divergenceText.text = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
-            .div(MILLION.toFloat())
-            .toString()
+        var currentDiv = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
+        var nextDiv = prefs.getInt(SHARED_NEXT_DIVERGENCE, Int.MIN_VALUE)
+
+        if (currentDiv !in ALL_RANGE) {
+            DivergenceWidget.setRandomDivergence(prefs)
+            currentDiv = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
+            nextDiv = prefs.getInt(SHARED_NEXT_DIVERGENCE, Int.MIN_VALUE)
+        }
+        currentDivergenceText.text = (currentDiv / MILLION.toFloat()).toString()
+        nextDivergenceText.text = (nextDiv / MILLION.toFloat()).toString()
 
         changeDivergenceButton.setOnClickListener { changeDivergence(prefs) }
     }
@@ -38,13 +45,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         with(prefs.edit()) {
-            putInt(SHARED_DIVERGENCE, userDivNumber)
+            putInt(SHARED_NEXT_DIVERGENCE, userDivNumber)
             apply()
         }
 
         updateWidget()
 
         Toast.makeText(this, "Updated!", Toast.LENGTH_SHORT).show()
+        recreate()
     }
 
     private fun updateWidget() {
