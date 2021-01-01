@@ -16,6 +16,9 @@ With minus:
 
 ![minus preview](app/src/main/res/drawable-nodpi/appwidget_minus_preview.jpg)
 
+## Download
+https://github.com/retanar/Divergence_Meter/releases
+
 #### Known issues
 - For unknown reasons, widget can display error message "Problem loading widget". Fix: delete and add the widget again.
 - There is -1.000000 divergence which would be displayed as -.000000
