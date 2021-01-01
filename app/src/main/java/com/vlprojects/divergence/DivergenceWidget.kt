@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.SharedPreferences
+import android.content.res.TypedArray
 import android.os.Build
 import android.util.Log
 import android.widget.RemoteViews
@@ -32,9 +33,6 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         }
     }
 
-    // TODO: maybe delete this and use it only whenever I need it
-    private lateinit var notifyManager: NotificationManager
-
     override fun onEnabled(context: Context) {
         val prefs = context.getSharedPreferences(SHARED_FILENAME, 0)
         val currentDiv = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
@@ -43,12 +41,12 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         if (currentDiv !in ALL_RANGE)
             setRandomDivergence(prefs)
 
-        setNotificationManager(context)
-        createNotificationChannel()
+        createNotificationChannel(context)
 
         super.onEnabled(context)
     }
 
+    // TODO: cooldown for changing worldlines
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         val prefs = context.getSharedPreferences(SHARED_FILENAME, 0)
 
@@ -58,6 +56,9 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         val previousDiv = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
         val nextDivDigits = splitIntegerToDigits(currentDiv)
 
+        val nixieNumbers = context.resources.obtainTypedArray(R.array.nixieImage)
+        val tubes = context.resources.obtainTypedArray(R.array.widgetTube)
+
         if (currentDiv == Int.MIN_VALUE)
             throw RuntimeException(
                 "Something went wrong. Please remove the widget and add it again." +
@@ -66,7 +67,15 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
 
         checkNotifications(context, previousDiv, currentDiv)
 
-        appWidgetIds.forEach { updateAppWidget(context, appWidgetManager, it, nextDivDigits) }
+        appWidgetIds.forEach {
+            updateAppWidget(
+                context, appWidgetManager, it,
+                nextDivDigits, nixieNumbers, tubes
+            )
+        }
+
+        nixieNumbers.recycle()
+        tubes.recycle()
 
         // Secondly, save new divergence to shared prefs
         val newDiv = generateBalancedRandomDivergence(currentDiv)
@@ -83,30 +92,25 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         context: Context,
         appWidgetManager: AppWidgetManager,
         appWidgetId: Int,
-        divergenceDigits: IntArray
+        divergenceDigits: IntArray,
+        nixieNumbers: TypedArray,
+        tubes: TypedArray
     ) {
-        // TODO: this is not good if you have multiple widgets
-        val nixie = context.resources.obtainTypedArray(R.array.nixieImage)
-        val tube = context.resources.obtainTypedArray(R.array.widgetTube)
-
         val views = RemoteViews(context.packageName, R.layout.divergence_widget)
         views.setImageViewResource(R.id.tubeDot, R.drawable.nixie_dot)
 
         // Setting numbers in place
         for (i in 0..6) {
             views.setImageViewResource(
-                tube.getResourceId(i, 0),
+                tubes.getResourceId(i, 0),
                 if (divergenceDigits[i] >= 0)
-                    nixie.getResourceId(divergenceDigits[i], 0)
+                    nixieNumbers.getResourceId(divergenceDigits[i], 0)
                 else
                     R.drawable.nixie_minus
             )
         }
 
         appWidgetManager.updateAppWidget(appWidgetId, views)
-
-        nixie.recycle()
-        tube.recycle()
     }
 
     private fun generateBalancedRandomDivergence(currentDiv: Int): Int {
@@ -179,25 +183,21 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         }
     }
 
-    // TODO: icon looks bad
     private fun sendNotification(context: Context, text: String) {
         Log.d("DivergenceWidget", "sendNotification() call with text = \"$text\"")
-        setNotificationManager(context)
+        val notifyManager = getNotificationManager(context)
         val builder = NotificationCompat.Builder(context, CHANGE_WORLDLINE_NOTIFICATION_CHANNEL)
-            .setSmallIcon(R.mipmap.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle("Worldline change!")
             .setContentText(text)
             .setSound(null)
         notifyManager.notify(NOTIFICATION_ID, builder.build())
     }
 
-    private fun setNotificationManager(context: Context) {
-        if (!::notifyManager.isInitialized)
-            notifyManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-    }
 
-    private fun createNotificationChannel() {
+    private fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notifyManager = getNotificationManager(context)
             val channel = NotificationChannel(
                 CHANGE_WORLDLINE_NOTIFICATION_CHANNEL,
                 "Change worldline notification",
@@ -208,4 +208,6 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         }
     }
 
+    private fun getNotificationManager(context: Context) =
+        context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 }
