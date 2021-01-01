@@ -5,6 +5,7 @@
     <string name="next_divergence">Next divergence:</string>
     <string name="hint_enter_new_divergence_here">Enter new divergence here</string>
     <string name="change">Change</string>
+<!--TODO: write a guide-->
     <string name="placeholder">Should probably write a mini guide here on how to make a widget.
     </string>
 </resources>

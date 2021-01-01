@@ -32,6 +32,7 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         }
     }
 
+    // TODO: maybe delete this and use it only whenever I need it
     private lateinit var notifyManager: NotificationManager
 
     override fun onEnabled(context: Context) {
@@ -88,11 +89,10 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         val nixie = context.resources.obtainTypedArray(R.array.nixieImage)
         val tube = context.resources.obtainTypedArray(R.array.widgetTube)
 
-        // Construct the RemoteViews object
         val views = RemoteViews(context.packageName, R.layout.divergence_widget)
         views.setImageViewResource(R.id.tubeDot, R.drawable.nixie_dot)
 
-        // Main logic
+        // Setting numbers in place
         for (i in 0..6) {
             views.setImageViewResource(
                 tube.getResourceId(i, 0),
@@ -109,7 +109,7 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         tube.recycle()
     }
 
-    fun generateBalancedRandomDivergence(currentDiv: Int): Int {
+    private fun generateBalancedRandomDivergence(currentDiv: Int): Int {
         /* Coefficient needed to lower the chance of going to new worldline
          * How it works:
          *  - equalize the divergence to range [0;1_000_000)
@@ -166,6 +166,8 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         return digits
     }
 
+    /** Notifications **/
+
     private fun checkNotifications(context: Context, oldDiv: Int, newDiv: Int) {
         when (newDiv) {
             in OMEGA_RANGE -> if (oldDiv !in OMEGA_RANGE)
@@ -185,6 +187,7 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
             .setSmallIcon(R.mipmap.ic_launcher_foreground)
             .setContentTitle("Worldline change!")
             .setContentText(text)
+            .setSound(null)
         notifyManager.notify(NOTIFICATION_ID, builder.build())
     }
 
@@ -200,6 +203,7 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
                 "Change worldline notification",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
+            channel.setSound(null, null)
             notifyManager.createNotificationChannel(channel)
         }
     }
