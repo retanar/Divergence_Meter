@@ -20,5 +20,6 @@ With minus:
 https://github.com/retanar/Divergence_Meter/releases
 
 #### Known issues
-- For unknown reasons, widget can display error message "Problem loading widget". Fix: delete and add the widget again.
+- For unknown reasons, you may encounter an error "Problem loading widget". Fix: delete and add the widget again.
 - There is -1.000000 divergence which would be displayed as -.000000
+- Although the program uses modifyed random generator it's still random, so it's possible to switch the worldline a few times in a row. I'm working on a fix for this.
