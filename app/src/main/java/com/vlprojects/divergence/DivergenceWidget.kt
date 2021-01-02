@@ -33,37 +33,47 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         }
     }
 
+    // Not working from the first time on my XRN3 Pro for no reason
     override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+
         val prefs = context.getSharedPreferences(SHARED_FILENAME, 0)
         val currentDiv = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
+//        val nextDiv = prefs.getInt(SHARED_NEXT_DIVERGENCE, Int.MIN_VALUE)
         Log.d("DivergenceWidget", "onEnabled() call. Current divergence = $currentDiv")
 
         if (currentDiv !in ALL_RANGE)
             setRandomDivergence(prefs)
+        // Should work without this code
+        /*else if (nextDiv !in ALL_RANGE)
+            prefs.edit().apply {
+                putInt(SHARED_NEXT_DIVERGENCE, generateBalancedRandomDivergence(currentDiv))
+                apply()
+            }*/
 
         createNotificationChannel(context)
 
-        super.onEnabled(context)
     }
 
-    // TODO: cooldown for changing worldlines
+    // TODO: 0.4.0 cooldown for changing worldlines
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+        super.onUpdate(context, appWidgetManager, appWidgetIds)
+
         val prefs = context.getSharedPreferences(SHARED_FILENAME, 0)
 
         // Firstly, apply saved next divergence to the widgets,
         // so that the divergence can be updated to a specific number
-        val currentDiv = prefs.getInt(SHARED_NEXT_DIVERGENCE, Int.MIN_VALUE)
         val previousDiv = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
-        val nextDivDigits = splitIntegerToDigits(currentDiv)
+        var currentDiv = prefs.getInt(SHARED_NEXT_DIVERGENCE, Int.MIN_VALUE)
 
         val nixieNumbers = context.resources.obtainTypedArray(R.array.nixieImage)
         val tubes = context.resources.obtainTypedArray(R.array.widgetTube)
 
-        if (currentDiv == Int.MIN_VALUE)
-            throw RuntimeException(
-                "Something went wrong. Please remove the widget and add it again." +
-                        "If problem remains, contact the developer."
-            )
+        if (currentDiv == Int.MIN_VALUE) {
+            currentDiv = generateBalancedRandomDivergence(previousDiv)
+        }
+
+        val nextDivDigits = splitIntegerToDigits(currentDiv)
 
         checkNotifications(context, previousDiv, currentDiv)
 
@@ -74,9 +84,6 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
             )
         }
 
-        nixieNumbers.recycle()
-        tubes.recycle()
-
         // Secondly, save new divergence to shared prefs
         val newDiv = generateBalancedRandomDivergence(currentDiv)
         with(prefs.edit()) {
@@ -85,7 +92,8 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
             apply()
         }
 
-        super.onUpdate(context, appWidgetManager, appWidgetIds)
+        nixieNumbers.recycle()
+        tubes.recycle()
     }
 
     private fun updateAppWidget(
