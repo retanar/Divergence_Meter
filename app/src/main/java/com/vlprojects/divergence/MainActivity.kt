@@ -11,14 +11,14 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.math.roundToInt
 
-// TODO: replace kotlin synthetic with view binding
+// TODO: 0.4.0 replace kotlin synthetic with view binding
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // TODO: improve design in app
+        // TODO: 0.x.0 improve design in app
         val prefs = getSharedPreferences(SHARED_FILENAME, 0)
         var currentDiv = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
         var nextDiv = prefs.getInt(SHARED_NEXT_DIVERGENCE, Int.MIN_VALUE)
@@ -28,8 +28,9 @@ class MainActivity : AppCompatActivity() {
             currentDiv = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
             nextDiv = prefs.getInt(SHARED_NEXT_DIVERGENCE, Int.MIN_VALUE)
         }
-        currentDivergenceText.text = (currentDiv / MILLION.toFloat()).toString()
-        nextDivergenceText.text = (nextDiv / MILLION.toFloat()).toString()
+
+        currentDivergenceText.text = "%.6f".format(currentDiv / MILLION.toFloat())
+        nextDivergenceText.text = "%.6f".format(nextDiv / MILLION.toFloat())
 
         changeDivergenceButton.setOnClickListener { changeDivergence(prefs) }
     }

@@ -5,7 +5,10 @@
     <string name="next_divergence">Next divergence:</string>
     <string name="hint_enter_new_divergence_here">Enter new divergence here</string>
     <string name="change">Change</string>
-<!--TODO: write a guide-->
-    <string name="placeholder">Should probably write a mini guide here on how to make a widget.
+    <string name="add_widget_guide">To add the widget:
+        \n- On a Home screen, hold an empty space.
+        \n- Tap Widgets. Then find a Divergence widget.
+        \n- Hold and move the widget wherever you want.
+        \n\nTo resize the widget, hold it and release. You\'ll see the dots around it that you can move.
     </string>
 </resources>
