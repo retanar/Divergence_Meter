@@ -25,11 +25,10 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
             val randomDivergence = Random.nextInt(ALL_RANGE)
             Log.d("DivergenceWidget", "setRandomDivergence() call. Random divergence = $randomDivergence")
 
-            with(preferences.edit()) {
-                putInt(SHARED_DIVERGENCE, randomDivergence)
-                putInt(SHARED_NEXT_DIVERGENCE, randomDivergence)
-                apply()
-            }
+            preferences.edit()
+                .putInt(SHARED_DIVERGENCE, randomDivergence)
+                .putInt(SHARED_NEXT_DIVERGENCE, randomDivergence)
+                .apply()
         }
     }
 
@@ -39,17 +38,10 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
 
         val prefs = context.getSharedPreferences(SHARED_FILENAME, 0)
         val currentDiv = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
-//        val nextDiv = prefs.getInt(SHARED_NEXT_DIVERGENCE, Int.MIN_VALUE)
         Log.d("DivergenceWidget", "onEnabled() call. Current divergence = $currentDiv")
 
         if (currentDiv !in ALL_RANGE)
             setRandomDivergence(prefs)
-        // Should work without this code
-        /*else if (nextDiv !in ALL_RANGE)
-            prefs.edit().apply {
-                putInt(SHARED_NEXT_DIVERGENCE, generateBalancedRandomDivergence(currentDiv))
-                apply()
-            }*/
 
         createNotificationChannel(context)
 
@@ -86,11 +78,10 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
 
         // Secondly, save new divergence to shared prefs
         val newDiv = generateBalancedRandomDivergence(currentDiv)
-        with(prefs.edit()) {
-            putInt(SHARED_DIVERGENCE, currentDiv)
-            putInt(SHARED_NEXT_DIVERGENCE, newDiv)
-            apply()
-        }
+        prefs.edit()
+            .putInt(SHARED_DIVERGENCE, currentDiv)
+            .putInt(SHARED_NEXT_DIVERGENCE, newDiv)
+            .apply()
 
         nixieNumbers.recycle()
         tubes.recycle()
@@ -121,6 +112,7 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         appWidgetManager.updateAppWidget(appWidgetId, views)
     }
 
+    // TODO: 0.4.0 cooldown
     private fun generateBalancedRandomDivergence(currentDiv: Int): Int {
         /* Coefficient needed to lower the chance of going to new worldline
          * How it works:
@@ -201,7 +193,6 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
             .setSound(null)
         notifyManager.notify(NOTIFICATION_ID, builder.build())
     }
-
 
     private fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

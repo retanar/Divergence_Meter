@@ -27,6 +27,11 @@ class MainActivity : AppCompatActivity() {
             DivergenceWidget.setRandomDivergence(prefs)
             currentDiv = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
             nextDiv = prefs.getInt(SHARED_NEXT_DIVERGENCE, Int.MIN_VALUE)
+        } else if (nextDiv !in ALL_RANGE) {
+            nextDiv = currentDiv
+            prefs.edit()
+                .putInt(SHARED_NEXT_DIVERGENCE, currentDiv)
+                .apply()
         }
 
         currentDivergenceText.text = "%.6f".format(currentDiv / MILLION.toFloat())
@@ -37,19 +42,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun changeDivergence(prefs: SharedPreferences) {
         val userDiv = userDivergence.text.toString()
-        val userDivNumber = (userDiv.toDouble() * MILLION).roundToInt()
-
         if (userDiv.isBlank())
             return
+
+        val userDivNumber = (userDiv.toDouble() * MILLION).roundToInt()
         if (userDivNumber !in ALL_RANGE) {
             Toast.makeText(this, "Wrong value. Should be in (-1.000000;2.000000)", Toast.LENGTH_LONG).show()
             return
         }
 
-        with(prefs.edit()) {
-            putInt(SHARED_NEXT_DIVERGENCE, userDivNumber)
-            apply()
-        }
+        prefs.edit()
+            .putInt(SHARED_NEXT_DIVERGENCE, userDivNumber)
+            .apply()
 
         updateWidget()
 
