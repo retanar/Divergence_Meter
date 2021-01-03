@@ -10,7 +10,7 @@ Android divergence meter widget like that in Steins;Gate.
 #### Images
 Normal view:
 
-![widget preview](app/src/main/res/drawable-nodpi/nixie_appwidget_preview.jpg)
+![widget preview](app/src/main/res/drawable-nodpi/appwidget_preview.jpg)
 
 With minus:
 

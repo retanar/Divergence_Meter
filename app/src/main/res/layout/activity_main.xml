@@ -1,13 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools" android:layout_height="wrap_content"
-              android:layout_width="match_parent" android:orientation="vertical" android:layout_margin="8dp">
-    <TextView
-        android:text="@string/placeholder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:id="@+id/textView"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textSize="20sp" android:layout_marginBottom="16dp"/>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
+
+    <LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent"
+                  android:orientation="vertical" android:layout_margin="8dp">
+        <TextView
+            android:text="@string/add_widget_guide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/textView"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="20sp"/>
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider"
+            android:layout_margin="8dp"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:layout_marginBottom="16dp">
+            <TextView
+                android:id="@+id/textView1"
+                android:text="@string/current_divergence"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/currentDivergenceText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" android:layout_weight="1"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="20sp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                tools:text="1.046596"/>
+    </LinearLayout>
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -19,7 +51,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textSize="20sp"/>
         <TextView
-            android:id="@+id/divergenceText"
+            android:id="@+id/nextDivergenceText"
             android:layout_width="0dp"
             android:layout_height="wrap_content" android:layout_weight="1"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
@@ -28,18 +60,19 @@
             android:layout_marginStart="8dp"
             tools:text="1.046596"/>
     </LinearLayout>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="numberSigned|numberDecimal"
-        android:ems="10"
-        android:id="@+id/userDivergence"
-        android:hint="@string/hint_enter_new_divergence_here"
-        android:layout_marginBottom="16dp"
-        android:importantForAutofill="no"/>
-    <Button
-        android:id="@+id/changeDivergenceButton"
-        android:text="@string/change"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" android:layout_gravity="center_horizontal"/>
-</LinearLayout>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberSigned|numberDecimal"
+            android:ems="10"
+            android:id="@+id/userDivergence"
+            android:hint="@string/hint_enter_new_divergence_here"
+            android:layout_marginBottom="16dp"
+            android:importantForAutofill="no"/>
+        <Button
+            android:id="@+id/changeDivergenceButton"
+            android:text="@string/change"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_gravity="center_horizontal"/>
+    </LinearLayout>
+</ScrollView>
