@@ -20,19 +20,14 @@ class MainActivity : AppCompatActivity() {
 
         // TODO: 0.x.0 improve design in app
         val prefs = getSharedPreferences(SHARED_FILENAME, 0)
-        var currentDiv = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
-        var nextDiv = prefs.getInt(SHARED_NEXT_DIVERGENCE, Int.MIN_VALUE)
+        val currentDiv = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
 
         if (currentDiv !in ALL_RANGE) {
             DivergenceWidget.setRandomDivergence(prefs)
-            currentDiv = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
-            nextDiv = prefs.getInt(SHARED_NEXT_DIVERGENCE, Int.MIN_VALUE)
-        } else if (nextDiv !in ALL_RANGE) {
-            nextDiv = currentDiv
-            prefs.edit()
-                .putInt(SHARED_NEXT_DIVERGENCE, currentDiv)
-                .apply()
+            recreate()
         }
+
+        val nextDiv = prefs.getInt(SHARED_NEXT_DIVERGENCE, currentDiv)
 
         currentDivergenceText.text = "%.6f".format(currentDiv / MILLION.toFloat())
         nextDivergenceText.text = "%.6f".format(nextDiv / MILLION.toFloat())

@@ -32,7 +32,6 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         }
     }
 
-    // Not working from the first time on my XRN3 Pro for no reason
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
 
@@ -44,7 +43,6 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
             setRandomDivergence(prefs)
 
         createNotificationChannel(context)
-
     }
 
     // TODO: 0.4.0 cooldown for changing worldlines
@@ -62,7 +60,10 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         val tubes = context.resources.obtainTypedArray(R.array.widgetTube)
 
         if (currentDiv == Int.MIN_VALUE) {
-            currentDiv = generateBalancedRandomDivergence(previousDiv)
+            if (previousDiv != Int.MIN_VALUE)
+                currentDiv = generateBalancedRandomDivergence(previousDiv)
+            else
+                setRandomDivergence(prefs)
         }
 
         val nextDivDigits = splitIntegerToDigits(currentDiv)
@@ -114,11 +115,6 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
 
     // TODO: 0.4.0 cooldown
     private fun generateBalancedRandomDivergence(currentDiv: Int): Int {
-        /* Coefficient needed to lower the chance of going to new worldline
-         * How it works:
-         *  - equalize the divergence to range [0;1_000_000)
-         *  - subtract half of the maximum divergence to put the divergence in range [-500_000;+500_000)
-         *  - divide by a specific number to create the coefficient */
         val coefficient = getCoefficient(currentDiv)
 
         var newDiv = currentDiv +
@@ -146,6 +142,11 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         return newDiv
     }
 
+    /* Coefficient needed to lower the chance of going to another attractor field
+     * How it works:
+     *  - equalize the divergence to range [0;1_000_000)
+     *  - subtract half of the maximum divergence to put the divergence in range [-500_000;+500_000)
+     *  - divide by a specific number to create the coefficient */
     private fun getCoefficient(currentDiv: Int): Int {
         return (when (currentDiv) {
             in BETA_RANGE -> -MILLION
@@ -175,11 +176,11 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
     private fun checkNotifications(context: Context, oldDiv: Int, newDiv: Int) {
         when (newDiv) {
             in OMEGA_RANGE -> if (oldDiv !in OMEGA_RANGE)
-                sendNotification(context, "Welcome to Omega worldline")
+                sendNotification(context, "Welcome to Omega attractor field")
             in ALPHA_RANGE -> if (oldDiv !in ALPHA_RANGE)
-                sendNotification(context, "Welcome to Alpha worldline")
+                sendNotification(context, "Welcome to Alpha attractor field")
             in BETA_RANGE -> if (oldDiv !in BETA_RANGE)
-                sendNotification(context, "Welcome to Beta worldline")
+                sendNotification(context, "Welcome to Beta attractor field")
         }
     }
 
