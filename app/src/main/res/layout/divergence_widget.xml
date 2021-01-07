@@ -1,54 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--TODO: fix size of a widget-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
-              android:layout_height="150dp"
+              android:layout_height="wrap_content"
               android:layout_width="wrap_content"
-              android:paddingLeft="@dimen/widget_margin"
-              android:paddingRight="@dimen/widget_margin"
-              android:background="@android:color/black"
+              android:gravity="center_horizontal"
               tools:ignore="ContentDescription">
-
     <ImageView
         android:id="@+id/tube6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        tools:srcCompat="@drawable/nixie_minus"/>
+        tools:srcCompat="@drawable/nixie_minus" android:adjustViewBounds="true"/>
     <ImageView
         android:id="@+id/tubeDot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1" tools:srcCompat="@drawable/nixie_dot"/>
+        android:layout_weight="1" tools:srcCompat="@drawable/nixie_dot" android:adjustViewBounds="true"/>
     <ImageView
         android:id="@+id/tube5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1" tools:srcCompat="@drawable/nixie0"/>
+        android:layout_weight="1" tools:srcCompat="@drawable/nixie0" android:adjustViewBounds="true"/>
     <ImageView
         android:id="@+id/tube4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1" tools:srcCompat="@drawable/nixie1"/>
+        android:layout_weight="1" tools:srcCompat="@drawable/nixie1" android:adjustViewBounds="true"/>
     <ImageView
         android:id="@+id/tube3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1" tools:srcCompat="@drawable/nixie2"/>
+        android:layout_weight="1" tools:srcCompat="@drawable/nixie2" android:adjustViewBounds="true"/>
     <ImageView
         android:id="@+id/tube2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1" tools:srcCompat="@drawable/nixie3"/>
+        android:layout_weight="1" tools:srcCompat="@drawable/nixie3" android:adjustViewBounds="true"/>
     <ImageView
         android:id="@+id/tube1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1" tools:srcCompat="@drawable/nixie4"/>
+        android:layout_weight="1" tools:srcCompat="@drawable/nixie4" android:adjustViewBounds="true"/>
     <ImageView
         android:id="@+id/tube0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1" tools:srcCompat="@drawable/nixie5"/>
+        android:layout_weight="1" tools:srcCompat="@drawable/nixie5" android:adjustViewBounds="true"/>
 
 </LinearLayout>

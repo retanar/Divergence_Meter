@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--TODO: colors-->
     <color name="colorPrimary">#E65100</color>
-    <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#D81B60</color>
-    <color name="colorGrey">#A2A2A2</color>
+    <color name="colorPrimaryDark">#8C2800</color>
+    <color name="colorAccent">#0095e6</color>
 </resources>
