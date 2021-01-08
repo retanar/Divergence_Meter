@@ -23,6 +23,6 @@ https://github.com/retanar/Divergence_Meter/releases
 #### Known issues
 - For unknown reasons, you may encounter an error "Problem loading widget". 
 Fix: delete and add the widget again.
-- There is -1.000000 divergence which would be displayed as -.000000
-- Although the program uses modified random generator it's still random, so it's possible to switch the attractor field a few times in a row. 
+- There is -1.000000 divergence which is displayed as -.000000
+- Although the program uses a modified random generator it's still random, so it's possible to switch the attractor field a few times in a row. 
 I'm working on a fix for this for the 0.4.0 version.
