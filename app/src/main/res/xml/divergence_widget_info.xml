@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:minWidth="200dp"
-    android:minHeight="50dp"
+    android:minHeight="40dp"
     android:updatePeriodMillis="7200000"
     android:previewImage="@drawable/appwidget_preview"
     android:initialLayout="@layout/divergence_widget"
