@@ -8,39 +8,43 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlin.math.roundToInt
+import com.vlprojects.divergence.databinding.ActivityMainBinding
+import kotlin.math.nextDown
 
 // TODO: 0.4.0 replace kotlin synthetic with view binding
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // TODO: 0.x.0 improve design in app
         val prefs = getSharedPreferences(SHARED_FILENAME, 0)
         val currentDiv = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
 
         if (currentDiv !in ALL_RANGE) {
-            DivergenceWidget.setRandomDivergence(prefs)
+            DivergenceGenerator.setRandomDivergence(prefs)
             recreate()
         }
 
         val nextDiv = prefs.getInt(SHARED_NEXT_DIVERGENCE, currentDiv)
 
-        currentDivergenceText.text = "%.6f".format(currentDiv / MILLION.toFloat())
-        nextDivergenceText.text = "%.6f".format(nextDiv / MILLION.toFloat())
+        binding.currentDivergence.text = "%.6f".format(currentDiv / MILLION.toFloat())
+        binding.nextDivergence.text = "%.6f".format(nextDiv / MILLION.toFloat())
 
-        changeDivergenceButton.setOnClickListener { changeDivergence(prefs) }
+        binding.changeDivergenceButton.setOnClickListener { changeDivergence(prefs) }
     }
 
     private fun changeDivergence(prefs: SharedPreferences) {
-        val userDiv = userDivergence.text.toString()
+        val userDiv = binding.userDivergence.text.toString()
         if (userDiv.isBlank())
             return
 
-        val userDivNumber = (userDiv.toDouble() * MILLION).roundToInt()
+        // TODO: maybe round to lower number
+        val userDivNumber = (userDiv.toDouble() * MILLION).nextDown().toInt()
         if (userDivNumber !in ALL_RANGE) {
             Toast.makeText(this, "Wrong value. Should be in (-1.000000;2.000000)", Toast.LENGTH_LONG).show()
             return

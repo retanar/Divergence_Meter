@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="?android:attr/listDivider"
-            android:layout_margin="8dp"/>
+            android:layout_margin="6dp"/>
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -31,7 +31,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textSize="20sp"/>
             <TextView
-                android:id="@+id/currentDivergenceText"
+                android:id="@+id/currentDivergence"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" android:layout_weight="1"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
@@ -51,7 +51,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textSize="20sp"/>
             <TextView
-                android:id="@+id/nextDivergenceText"
+                android:id="@+id/nextDivergence"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" android:layout_weight="1"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
