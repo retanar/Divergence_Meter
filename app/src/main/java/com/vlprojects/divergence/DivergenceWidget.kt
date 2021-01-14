@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
-import android.content.res.TypedArray
 import android.os.Build
 import android.util.Log
 import android.widget.RemoteViews
@@ -32,13 +31,8 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
 
         val prefs = context.getSharedPreferences(SHARED_FILENAME, 0)
 
-        // Firstly, apply saved next divergence to the widgets,
-        // so that the divergence can be updated to a specific number
         val previousDiv = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
         var currentDiv = prefs.getInt(SHARED_NEXT_DIVERGENCE, Int.MIN_VALUE)
-
-        val nixieNumbers = context.resources.obtainTypedArray(R.array.nixieImage)
-        val tubes = context.resources.obtainTypedArray(R.array.widgetTube)
 
         if (currentDiv == Int.MIN_VALUE) {
             if (previousDiv != Int.MIN_VALUE)
@@ -54,10 +48,12 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
 
         checkNotifications(context, previousDiv, currentDiv)
 
+        // Firstly, apply saved next divergence to the widgets,
+        // so that the divergence can be updated to a specific number
         appWidgetIds.forEach {
             updateAppWidget(
-                context, appWidgetManager, it,
-                nextDivDigits, nixieNumbers, tubes
+                context.packageName, appWidgetManager, it,
+                nextDivDigits
             )
         }
 
@@ -67,28 +63,23 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
             .putInt(SHARED_DIVERGENCE, currentDiv)
             .putInt(SHARED_NEXT_DIVERGENCE, newDiv)
             .apply()
-
-        nixieNumbers.recycle()
-        tubes.recycle()
     }
 
     private fun updateAppWidget(
-        context: Context,
+        packageName: String,
         appWidgetManager: AppWidgetManager,
         appWidgetId: Int,
-        divergenceDigits: IntArray,
-        nixieNumbers: TypedArray,
-        tubes: TypedArray
+        divergenceDigits: IntArray
     ) {
-        val views = RemoteViews(context.packageName, R.layout.divergence_widget)
+        val views = RemoteViews(packageName, R.layout.divergence_widget)
         views.setImageViewResource(R.id.tubeDot, R.drawable.nixie_dot)
 
         // Setting numbers in place
         for (i in 0..6) {
             views.setImageViewResource(
-                tubes.getResourceId(i, 0),
+                tubeIds[i],
                 if (divergenceDigits[i] >= 0)
-                    nixieNumbers.getResourceId(divergenceDigits[i], 0)
+                    nixieNumberDrawables[divergenceDigits[i]]
                 else
                     R.drawable.nixie_minus
             )

@@ -9,9 +9,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.vlprojects.divergence.databinding.ActivityMainBinding
-import kotlin.math.nextDown
 
-// TODO: 0.4.0 replace kotlin synthetic with view binding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -43,8 +41,7 @@ class MainActivity : AppCompatActivity() {
         if (userDiv.isBlank())
             return
 
-        // TODO: maybe round to lower number
-        val userDivNumber = (userDiv.toDouble() * MILLION).nextDown().toInt()
+        val userDivNumber = (userDiv.toDouble() * MILLION).toInt()
         if (userDivNumber !in ALL_RANGE) {
             Toast.makeText(this, "Wrong value. Should be in (-1.000000;2.000000)", Toast.LENGTH_LONG).show()
             return
@@ -63,14 +60,13 @@ class MainActivity : AppCompatActivity() {
     private fun updateWidget() {
         val intentUpdate = Intent(this, DivergenceWidget::class.java)
         intentUpdate.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+
         val ids = AppWidgetManager.getInstance(application).getAppWidgetIds(
             ComponentName(application, DivergenceWidget::class.java)
         )
         intentUpdate.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
 
-        val pendingIntent = PendingIntent.getBroadcast(
-            this, 0, intentUpdate, PendingIntent.FLAG_UPDATE_CURRENT
-        )
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, intentUpdate, PendingIntent.FLAG_UPDATE_CURRENT)
         pendingIntent.send()
     }
 }
