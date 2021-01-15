@@ -60,19 +60,25 @@
                 android:layout_marginStart="8dp"
                 tools:text="@string/default_divergence"/>
         </LinearLayout>
-        <EditText
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="numberSigned|numberDecimal"
-            android:ems="10"
-            android:id="@+id/userDivergence"
-            android:hint="@string/hint_enter_new_divergence_here"
-            android:layout_marginBottom="16dp"
-            android:importantForAutofill="no"/>
-        <Button
-            android:id="@+id/changeDivergenceButton"
-            android:text="@string/change"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:layout_gravity="center_horizontal"/>
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/userDivergence"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:inputType="numberSigned|numberDecimal"
+                android:hint="@string/hint_enter_new_divergence_here"
+                android:layout_marginBottom="16dp"
+                android:importantForAutofill="no"/>
+            <Button
+                android:id="@+id/changeDivergenceButton"
+                android:text="@string/change"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"/>
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

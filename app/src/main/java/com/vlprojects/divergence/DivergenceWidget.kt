@@ -9,6 +9,8 @@ import android.os.Build
 import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
+import com.vlprojects.divergence.DivergenceMeter.getDivergenceValuesOrGenerate
+import com.vlprojects.divergence.DivergenceMeter.saveDivergence
 
 class DivergenceWidget : android.appwidget.AppWidgetProvider() {
 
@@ -16,11 +18,11 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         super.onEnabled(context)
 
         val prefs = context.getSharedPreferences(SHARED_FILENAME, 0)
-        val currentDiv = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
+        val currentDiv = prefs.getInt(SHARED_CURRENT_DIVERGENCE, Int.MIN_VALUE)
         Log.d("DivergenceWidget", "onEnabled() call. Current divergence = $currentDiv")
 
         if (currentDiv !in ALL_RANGE)
-            DivergenceGenerator.setRandomDivergence(prefs)
+            DivergenceMeter.saveRandomDivergences(prefs)
 
         createNotificationChannel(context)
     }
@@ -30,23 +32,10 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
 
         val prefs = context.getSharedPreferences(SHARED_FILENAME, 0)
+        val (currentDiv, nextDiv) = prefs.getDivergenceValuesOrGenerate()
+        val nextDivDigits = DivergenceMeter.splitIntegerToDigits(nextDiv)
 
-        val previousDiv = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
-        var currentDiv = prefs.getInt(SHARED_NEXT_DIVERGENCE, Int.MIN_VALUE)
-
-        if (currentDiv == Int.MIN_VALUE) {
-            if (previousDiv != Int.MIN_VALUE)
-                currentDiv = DivergenceGenerator.generateBalanced(previousDiv)
-            else {
-                DivergenceGenerator.setRandomDivergence(prefs)
-                onUpdate(context, appWidgetManager, appWidgetIds)
-                return
-            }
-        }
-
-        val nextDivDigits = DivergenceGenerator.splitIntegerToDigits(currentDiv)
-
-        checkNotifications(context, previousDiv, currentDiv)
+        checkNotifications(context, currentDiv, nextDiv)
 
         // Firstly, apply saved next divergence to the widgets,
         // so that the divergence can be updated to a specific number
@@ -58,11 +47,8 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         }
 
         // Secondly, save new divergence to shared prefs
-        val newDiv = DivergenceGenerator.generateBalanced(currentDiv)
-        prefs.edit()
-            .putInt(SHARED_DIVERGENCE, currentDiv)
-            .putInt(SHARED_NEXT_DIVERGENCE, newDiv)
-            .apply()
+        val newDiv = DivergenceMeter.generateBalancedDivergence(nextDiv)
+        prefs.saveDivergence(nextDiv, newDiv)
     }
 
     private fun updateAppWidget(

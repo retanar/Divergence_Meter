@@ -8,6 +8,8 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.vlprojects.divergence.DivergenceMeter.getDivergenceValuesOrGenerate
+import com.vlprojects.divergence.DivergenceMeter.saveDivergence
 import com.vlprojects.divergence.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -21,14 +23,7 @@ class MainActivity : AppCompatActivity() {
 
         // TODO: 0.x.0 improve design in app
         val prefs = getSharedPreferences(SHARED_FILENAME, 0)
-        val currentDiv = prefs.getInt(SHARED_DIVERGENCE, Int.MIN_VALUE)
-
-        if (currentDiv !in ALL_RANGE) {
-            DivergenceGenerator.setRandomDivergence(prefs)
-            recreate()
-        }
-
-        val nextDiv = prefs.getInt(SHARED_NEXT_DIVERGENCE, currentDiv)
+        val (currentDiv, nextDiv) = prefs.getDivergenceValuesOrGenerate()
 
         binding.currentDivergence.text = "%.6f".format(currentDiv / MILLION.toFloat())
         binding.nextDivergence.text = "%.6f".format(nextDiv / MILLION.toFloat())
@@ -47,9 +42,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        prefs.edit()
-            .putInt(SHARED_NEXT_DIVERGENCE, userDivNumber)
-            .apply()
+        prefs.saveDivergence(nextDiv = userDivNumber)
 
         updateWidget()
 
