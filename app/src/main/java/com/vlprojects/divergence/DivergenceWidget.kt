@@ -11,6 +11,7 @@ import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.vlprojects.divergence.DivergenceMeter.getDivergenceValuesOrGenerate
 import com.vlprojects.divergence.DivergenceMeter.saveDivergence
+import java.util.Date
 
 class DivergenceWidget : android.appwidget.AppWidgetProvider() {
 
@@ -27,7 +28,6 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         createNotificationChannel(context)
     }
 
-    // TODO: 0.4.0 cooldown for changing worldlines
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
 
@@ -35,19 +35,22 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         val (currentDiv, nextDiv) = prefs.getDivergenceValuesOrGenerate()
         val nextDivDigits = DivergenceMeter.splitIntegerToDigits(nextDiv)
 
-        checkNotifications(context, currentDiv, nextDiv)
+        DivergenceMeter.checkAttractorChange(currentDiv, nextDiv)?.let {
+            sendNotification(context, "Welcome to $it attractor field")
+            prefs.edit()
+                .putLong(SHARED_LAST_ATTRACTOR_CHANGE, Date().time)
+                .apply()
+        }
 
         // Firstly, apply saved next divergence to the widgets,
         // so that the divergence can be updated to a specific number
         appWidgetIds.forEach {
-            updateAppWidget(
-                context.packageName, appWidgetManager, it,
-                nextDivDigits
-            )
+            updateAppWidget(context.packageName, appWidgetManager, it, nextDivDigits)
         }
 
         // Secondly, save new divergence to shared prefs
-        val newDiv = DivergenceMeter.generateBalancedDivergence(nextDiv)
+        val lastAttractorChange = prefs.getLong(SHARED_LAST_ATTRACTOR_CHANGE, 0)
+        val newDiv = DivergenceMeter.generateBalancedDivergenceWithCooldown(nextDiv, lastAttractorChange)
         prefs.saveDivergence(nextDiv, newDiv)
     }
 
@@ -75,17 +78,6 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
     }
 
     /** Notifications **/
-
-    private fun checkNotifications(context: Context, oldDiv: Int, newDiv: Int) {
-        when (newDiv) {
-            in OMEGA_RANGE -> if (oldDiv !in OMEGA_RANGE)
-                sendNotification(context, "Welcome to Omega attractor field")
-            in ALPHA_RANGE -> if (oldDiv !in ALPHA_RANGE)
-                sendNotification(context, "Welcome to Alpha attractor field")
-            in BETA_RANGE -> if (oldDiv !in BETA_RANGE)
-                sendNotification(context, "Welcome to Beta attractor field")
-        }
-    }
 
     private fun sendNotification(context: Context, text: String) {
         Log.d("DivergenceWidget", "sendNotification() call with text = \"$text\"")

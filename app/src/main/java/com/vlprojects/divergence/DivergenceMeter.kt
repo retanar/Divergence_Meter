@@ -2,6 +2,7 @@ package com.vlprojects.divergence
 
 import android.content.SharedPreferences
 import android.util.Log
+import java.util.Date
 import kotlin.math.absoluteValue
 import kotlin.random.Random
 import kotlin.random.nextInt
@@ -10,11 +11,13 @@ object DivergenceMeter {
     private const val DIVERGENCE_CHANGE_STEP = 100_000
     private const val MAX_COEFFICIENT = DIVERGENCE_CHANGE_STEP / 4
 
-    fun saveRandomDivergences(preferences: SharedPreferences) {
+    fun saveRandomDivergences(preferences: SharedPreferences): DivergenceValues {
         val randomDivergence = generateRandomDivergence()
-        preferences.saveDivergence(randomDivergence, generateBalancedDivergence(randomDivergence))
+        val nextDiv = generateBalancedDivergence(randomDivergence)
+        preferences.saveDivergence(randomDivergence, nextDiv)
 
         Log.d("DivergenceMeter", "saveRandomDivergences() call. Random divergence = $randomDivergence")
+        return DivergenceValues(randomDivergence, nextDiv)
     }
 
     fun SharedPreferences.saveDivergence(
@@ -32,8 +35,18 @@ object DivergenceMeter {
 
     fun generateRandomDivergence() = Random.nextInt(ALL_RANGE)
 
-    // TODO: 0.4.0 cooldown
-    fun generateBalancedDivergence(currentDiv: Int): Int {
+    fun generateBalancedDivergenceWithCooldown(currentDiv: Int, lastTimeChanged: Long): Int {
+        val cooldownTime = Date().time - ATTRACTOR_CHANGE_COOLDOWN_MS
+        return if (lastTimeChanged < cooldownTime)
+            generateBalancedDivergence(currentDiv, ALL_RANGE)
+        else
+            generateBalancedDivergence(currentDiv, getAttractor(currentDiv).range)
+    }
+
+    fun generateBalancedDivergence(currentDiv: Int, attractor: IntRange = ALL_RANGE): Int {
+        if (currentDiv !in attractor)
+            throw IllegalArgumentException("Current divergence ($currentDiv) is not in attractor's range ($attractor)")
+
         val coefficient = getCoefficient(currentDiv)
         var newDiv: Int
 
@@ -43,7 +56,7 @@ object DivergenceMeter {
                         -DIVERGENCE_CHANGE_STEP + coefficient,
                         DIVERGENCE_CHANGE_STEP + coefficient
                     )
-        } while (newDiv !in ALL_RANGE)
+        } while (newDiv !in attractor)
 
         Log.d(
             "DivergenceMeter",
@@ -62,14 +75,9 @@ object DivergenceMeter {
      *  - equalize the divergence to range [0;1_000_000)
      *  - subtract half of the maximum divergence to put the divergence in range [-500_000;+500_000)
      *  - divide by a specific number to create the coefficient */
-    private fun getCoefficient(currentDiv: Int): Int {
-        return (when (currentDiv) {
-            in BETA_RANGE -> -MILLION
-            in OMEGA_RANGE -> +MILLION
-            else -> 0
-        } + currentDiv - 500_000) /
+    private fun getCoefficient(currentDiv: Int) =
+        (-getAttractor(currentDiv).range.first + currentDiv - 500_000) /
                 -(MILLION / 2 / MAX_COEFFICIENT)
-    }
 
     fun SharedPreferences.getDivergenceValuesOrGenerate(): DivergenceValues {
         var currentDiv = getInt(SHARED_CURRENT_DIVERGENCE, UNDEFINED_DIVERGENCE)
@@ -104,6 +112,16 @@ object DivergenceMeter {
 
         return digits
     }
+
+    fun getAttractor(div: Int) = attractors.find { div in it }
+        ?: throw IllegalArgumentException("Divergence is out of range of existing attractors!")
+
+    /** Returns new attractor name or null if attractor hasn't been changed */
+    fun checkAttractorChange(oldDiv: Int, newDiv: Int): String? =
+        with(getAttractor(newDiv)) {
+            if (oldDiv !in this) this.name
+            else null
+        }
 }
 
 data class DivergenceValues(val currentDiv: Int, val nextDiv: Int)
