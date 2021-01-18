@@ -8,22 +8,7 @@ const val SHARED_LAST_ATTRACTOR_CHANGE = "last_attractor_change_time"
 const val CHANGE_WORLDLINE_NOTIFICATION_CHANNEL = "change_worldline_channel"
 const val NOTIFICATION_ID = 101
 
-data class Attractor(val range: IntRange, val name: String) {
-    operator fun contains(div: Int) = div in range
-}
-
 const val MILLION = 1_000_000
-val OMEGA_RANGE = -MILLION until 0  // Inclusive -1_000_000 is needed for getCoefficient function
-val ALPHA_RANGE = 0 until MILLION
-val BETA_RANGE = MILLION until 2 * MILLION
-val ALL_RANGE = OMEGA_RANGE.first..BETA_RANGE.last
-
-val attractors = arrayOf(
-    Attractor(OMEGA_RANGE, "Omega"),
-    Attractor(ALPHA_RANGE, "Alpha"),
-    Attractor(BETA_RANGE, "Beta"),
-)
-
 const val UNDEFINED_DIVERGENCE = Int.MIN_VALUE
 const val ATTRACTOR_CHANGE_COOLDOWN_MS = 86_400_000     // 1 day
 

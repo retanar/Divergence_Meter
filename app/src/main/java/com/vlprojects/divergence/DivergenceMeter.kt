@@ -33,19 +33,19 @@ object DivergenceMeter {
         }
     }
 
-    fun generateRandomDivergence() = Random.nextInt(ALL_RANGE)
+    fun generateRandomDivergence() = Random.nextInt(ALL_RANGE.range)
 
     fun generateBalancedDivergenceWithCooldown(currentDiv: Int, lastTimeChanged: Long): Int {
         val cooldownTime = Date().time - ATTRACTOR_CHANGE_COOLDOWN_MS
         return if (lastTimeChanged < cooldownTime)
             generateBalancedDivergence(currentDiv, ALL_RANGE)
         else
-            generateBalancedDivergence(currentDiv, getAttractor(currentDiv).range)
+            generateBalancedDivergence(currentDiv, getAttractor(currentDiv))
     }
 
-    fun generateBalancedDivergence(currentDiv: Int, attractor: IntRange = ALL_RANGE): Int {
+    fun generateBalancedDivergence(currentDiv: Int, attractor: Attractor = ALL_RANGE): Int {
         if (currentDiv !in attractor)
-            throw IllegalArgumentException("Current divergence ($currentDiv) is not in attractor's range ($attractor)")
+            throw IllegalArgumentException("Current divergence ($currentDiv) is not in attractor's range (${attractor.range})")
 
         val coefficient = getCoefficient(currentDiv)
         var newDiv: Int
