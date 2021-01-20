@@ -15,20 +15,21 @@ import com.vlprojects.divergence.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private val prefs by lazy { getSharedPreferences(SHARED_FILENAME, 0) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // TODO: 0.x.0 improve design in app
-        val prefs = getSharedPreferences(SHARED_FILENAME, 0)
-        val (currentDiv, nextDiv) = prefs.getDivergenceValuesOrGenerate()
+        setDivergenceText()
+        binding.changeDivergenceButton.setOnClickListener { changeDivergence(prefs) }
+    }
 
+    private fun setDivergenceText() {
+        val (currentDiv, nextDiv) = prefs.getDivergenceValuesOrGenerate()
         binding.currentDivergence.text = "%.6f".format(currentDiv / MILLION.toFloat())
         binding.nextDivergence.text = "%.6f".format(nextDiv / MILLION.toFloat())
-
-        binding.changeDivergenceButton.setOnClickListener { changeDivergence(prefs) }
     }
 
     private fun changeDivergence(prefs: SharedPreferences) {
@@ -43,7 +44,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         prefs.saveDivergence(nextDiv = userDivNumber)
-
         updateWidget()
 
         Toast.makeText(this, "Updated!", Toast.LENGTH_SHORT).show()

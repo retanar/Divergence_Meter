@@ -19,11 +19,11 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         super.onEnabled(context)
 
         val prefs = context.getSharedPreferences(SHARED_FILENAME, 0)
-        val currentDiv = prefs.getInt(SHARED_CURRENT_DIVERGENCE, Int.MIN_VALUE)
-        Log.d("DivergenceWidget", "onEnabled() call. Current divergence = $currentDiv")
-
-        if (currentDiv !in ALL_RANGE)
-            DivergenceMeter.saveRandomDivergences(prefs)
+        val (currentDiv, nextDiv) = prefs.getDivergenceValuesOrGenerate()
+        Log.d(
+            "DivergenceWidget", "onEnabled() call. Current divergence = $currentDiv; " +
+                    "Next divergence = $nextDiv"
+        )
 
         createNotificationChannel(context)
     }

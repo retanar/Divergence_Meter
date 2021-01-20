@@ -23,7 +23,7 @@ val nixieNumberDrawables by lazy {
         R.drawable.nixie6,
         R.drawable.nixie7,
         R.drawable.nixie8,
-        R.drawable.nixie9,
+        R.drawable.nixie9
     )
 }
 val tubeIds by lazy {

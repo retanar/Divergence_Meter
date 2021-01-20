@@ -7,31 +7,10 @@ import kotlin.math.absoluteValue
 import kotlin.random.Random
 import kotlin.random.nextInt
 
+@Suppress("MemberVisibilityCanBePrivate")
 object DivergenceMeter {
     private const val DIVERGENCE_CHANGE_STEP = 100_000
     private const val MAX_COEFFICIENT = DIVERGENCE_CHANGE_STEP / 4
-
-    fun saveRandomDivergences(preferences: SharedPreferences): DivergenceValues {
-        val randomDivergence = generateRandomDivergence()
-        val nextDiv = generateBalancedDivergence(randomDivergence)
-        preferences.saveDivergence(randomDivergence, nextDiv)
-
-        Log.d("DivergenceMeter", "saveRandomDivergences() call. Random divergence = $randomDivergence")
-        return DivergenceValues(randomDivergence, nextDiv)
-    }
-
-    fun SharedPreferences.saveDivergence(
-        currentDiv: Int = UNDEFINED_DIVERGENCE,
-        nextDiv: Int = UNDEFINED_DIVERGENCE
-    ) {
-        with(edit()) {
-            if (currentDiv != UNDEFINED_DIVERGENCE)
-                putInt(SHARED_CURRENT_DIVERGENCE, currentDiv)
-            if (nextDiv != UNDEFINED_DIVERGENCE)
-                putInt(SHARED_NEXT_DIVERGENCE, nextDiv)
-            apply()
-        }
-    }
 
     fun generateRandomDivergence() = Random.nextInt(ALL_RANGE.range)
 
@@ -79,6 +58,9 @@ object DivergenceMeter {
         (-getAttractor(currentDiv).range.first + currentDiv - 500_000) /
                 -(MILLION / 2 / MAX_COEFFICIENT)
 
+    fun getAttractor(div: Int) = attractors.find { div in it }
+        ?: throw IllegalArgumentException("Divergence is out of range of existing attractors!")
+
     fun SharedPreferences.getDivergenceValuesOrGenerate(): DivergenceValues {
         var currentDiv = getInt(SHARED_CURRENT_DIVERGENCE, UNDEFINED_DIVERGENCE)
         var newDiv = getInt(SHARED_NEXT_DIVERGENCE, UNDEFINED_DIVERGENCE)
@@ -98,6 +80,26 @@ object DivergenceMeter {
         return DivergenceValues(currentDiv, newDiv)
     }
 
+    fun SharedPreferences.saveDivergence(
+        currentDiv: Int = UNDEFINED_DIVERGENCE,
+        nextDiv: Int = UNDEFINED_DIVERGENCE
+    ) {
+        with(edit()) {
+            if (currentDiv != UNDEFINED_DIVERGENCE)
+                putInt(SHARED_CURRENT_DIVERGENCE, currentDiv)
+            if (nextDiv != UNDEFINED_DIVERGENCE)
+                putInt(SHARED_NEXT_DIVERGENCE, nextDiv)
+            apply()
+        }
+    }
+
+    /** Returns new attractor name or null if attractor hasn't been changed */
+    fun checkAttractorChange(oldDiv: Int, newDiv: Int): String? =
+        with(getAttractor(newDiv)) {
+            if (oldDiv !in this) this.name
+            else null
+        }
+
     // idk if I should somehow simplify this
     fun splitIntegerToDigits(number: Int): IntArray {
         val digits = IntArray(7)
@@ -112,16 +114,6 @@ object DivergenceMeter {
 
         return digits
     }
-
-    fun getAttractor(div: Int) = attractors.find { div in it }
-        ?: throw IllegalArgumentException("Divergence is out of range of existing attractors!")
-
-    /** Returns new attractor name or null if attractor hasn't been changed */
-    fun checkAttractorChange(oldDiv: Int, newDiv: Int): String? =
-        with(getAttractor(newDiv)) {
-            if (oldDiv !in this) this.name
-            else null
-        }
 }
 
 data class DivergenceValues(val currentDiv: Int, val nextDiv: Int)
