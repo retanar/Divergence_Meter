@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
 
         setDivergenceText()
         binding.changeDivergenceButton.setOnClickListener { changeDivergence(prefs) }
+        prefs.registerOnSharedPreferenceChangeListener(onPreferenceChangeListener)
     }
 
     private fun setDivergenceText() {
@@ -47,7 +48,6 @@ class MainActivity : AppCompatActivity() {
         updateWidget()
 
         Toast.makeText(this, "Updated!", Toast.LENGTH_SHORT).show()
-        recreate()
     }
 
     private fun updateWidget() {
@@ -61,5 +61,11 @@ class MainActivity : AppCompatActivity() {
 
         val pendingIntent = PendingIntent.getBroadcast(this, 0, intentUpdate, PendingIntent.FLAG_UPDATE_CURRENT)
         pendingIntent.send()
+    }
+
+    // Using field so it won't be garbage collected
+    private val onPreferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, tag ->
+        if (tag == SHARED_CURRENT_DIVERGENCE)
+            setDivergenceText()
     }
 }

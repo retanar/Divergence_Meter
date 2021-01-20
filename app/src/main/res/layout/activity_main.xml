@@ -12,6 +12,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:id="@+id/textView"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="20sp"
+            android:layout_marginBottom="6dp"/>
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_height="wrap_content"
+            android:text="@string/resize_widget_guide"
+            android:layout_width="match_parent"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textSize="20sp"/>
         <View
             android:id="@+id/divider"
@@ -43,7 +51,7 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" android:layout_marginBottom="12dp">
+            android:layout_height="match_parent" android:layout_marginBottom="12dp" android:visibility="gone">
             <TextView
                 android:text="@string/next_divergence"
                 android:layout_width="wrap_content"
