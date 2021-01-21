@@ -15,16 +15,17 @@ import com.vlprojects.divergence.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val prefs by lazy { getSharedPreferences(SHARED_FILENAME, 0) }
+    private lateinit var prefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        prefs = getSharedPreferences(SHARED_FILENAME, 0)
         setDivergenceText()
         binding.changeDivergenceButton.setOnClickListener { changeDivergence(prefs) }
-        prefs.registerOnSharedPreferenceChangeListener(onPreferenceChangeListener)
+        prefs.registerOnSharedPreferenceChangeListener(onDivergenceChangeListener)
     }
 
     private fun setDivergenceText() {
@@ -64,7 +65,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Using field so it won't be garbage collected
-    private val onPreferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, tag ->
+    private val onDivergenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, tag ->
         if (tag == SHARED_CURRENT_DIVERGENCE)
             setDivergenceText()
     }

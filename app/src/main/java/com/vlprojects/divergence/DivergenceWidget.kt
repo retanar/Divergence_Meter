@@ -6,7 +6,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.os.Build
-import android.util.Log
+//import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.vlprojects.divergence.DivergenceMeter.getDivergenceValuesOrGenerate
@@ -18,12 +18,12 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
 
-        val prefs = context.getSharedPreferences(SHARED_FILENAME, 0)
-        val (currentDiv, nextDiv) = prefs.getDivergenceValuesOrGenerate()
-        Log.d(
-            "DivergenceWidget", "onEnabled() call. Current divergence = $currentDiv; " +
-                    "Next divergence = $nextDiv"
-        )
+//        val prefs = context.getSharedPreferences(SHARED_FILENAME, 0)
+//        val (currentDiv, nextDiv) = prefs.getDivergenceValuesOrGenerate()
+//        Log.d(
+//            "DivergenceWidget",
+//            "onEnabled() call. Current divergence = $currentDiv; Next divergence = $nextDiv"
+//        )
 
         createNotificationChannel(context)
     }
@@ -80,7 +80,7 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
     /** Notifications **/
 
     private fun sendNotification(context: Context, text: String) {
-        Log.d("DivergenceWidget", "sendNotification() call with text = \"$text\"")
+//        Log.d("DivergenceWidget", "sendNotification() call with text = \"$text\"")
         val notifyManager = getNotificationManager(context)
         val builder = NotificationCompat.Builder(context, CHANGE_WORLDLINE_NOTIFICATION_CHANNEL)
             .setSmallIcon(R.drawable.ic_notification)

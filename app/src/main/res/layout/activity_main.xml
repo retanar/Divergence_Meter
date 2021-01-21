@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="?android:attr/listDivider"
-            android:layout_margin="6dp"/>
+            android:layout_margin="8dp"/>
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -80,7 +80,7 @@
                 android:inputType="numberSigned|numberDecimal"
                 android:hint="@string/hint_enter_new_divergence_here"
                 android:layout_marginBottom="16dp"
-                android:importantForAutofill="no"/>
+                android:importantForAutofill="no" android:maxLength="9"/>
             <Button
                 android:id="@+id/changeDivergenceButton"
                 android:text="@string/change"
