@@ -93,7 +93,7 @@ object DivergenceMeter {
         }
     }
 
-    /** Returns new attractor name or null if attractor hasn't been changed */
+    // Returns new attractor name or null if attractor hasn't been changed
     fun checkAttractorChange(oldDiv: Int, newDiv: Int): String? =
         with(getAttractor(newDiv)) {
             if (oldDiv !in this) this.name
