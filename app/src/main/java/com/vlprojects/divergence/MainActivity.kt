@@ -41,7 +41,14 @@ class MainActivity : AppCompatActivity() {
 
         val userDivNumber = (userDiv.toDouble() * MILLION).toInt()
         if (userDivNumber !in ALL_RANGE) {
-            Toast.makeText(this, "Wrong value. Should be in (-1.000000;2.000000)", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this,
+                "Wrong value. Should be in (%.6f;%.6f)".format(
+                    ALL_RANGE.range.first / MILLION.toFloat(),
+                    (ALL_RANGE.range.last + 1) / MILLION.toFloat(),
+                ),
+                Toast.LENGTH_LONG
+            ).show()
             return
         }
 

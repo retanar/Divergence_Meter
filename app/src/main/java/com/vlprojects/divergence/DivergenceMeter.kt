@@ -23,8 +23,15 @@ object DivergenceMeter {
     }
 
     fun generateBalancedDivergence(currentDiv: Int, attractor: Attractor = ALL_RANGE): Int {
-        if (currentDiv !in attractor)
-            throw IllegalArgumentException("Current divergence ($currentDiv) is not in attractor's range (${attractor.range})")
+        if (currentDiv !in attractor) {
+//            throw IllegalArgumentException("Current divergence ($currentDiv) is not in attractor's range (${attractor.range})")
+            val randomDiv = generateRandomDivergence()
+            Log.e(
+                "DivergenceMeter", "Error in generateBalancedDivergence(): " +
+                        "currentDiv was not in Attractor's range. Generated random divergence: $randomDiv"
+            )
+            return randomDiv
+        }
 
         val coefficient = getCoefficient(currentDiv)
         var newDiv: Int
@@ -58,8 +65,9 @@ object DivergenceMeter {
         (-getAttractor(currentDiv).range.first + currentDiv - 500_000) /
                 -(MILLION / 2 / MAX_COEFFICIENT)
 
-    fun getAttractor(div: Int) = attractors.find { div in it }
-        ?: throw IllegalArgumentException("Divergence is out of range of existing attractors!")
+    // TODO: Meh
+    fun getAttractor(div: Int): Attractor =
+        attractors.find { div in it } ?: ALL_RANGE
 
     fun SharedPreferences.getDivergenceValuesOrGenerate(): DivergenceValues {
         var currentDiv = getInt(SHARED_CURRENT_DIVERGENCE, UNDEFINED_DIVERGENCE)
