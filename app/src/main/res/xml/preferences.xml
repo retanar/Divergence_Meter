@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:key="attractorNotifications"
+        android:defaultValue="true"
+        android:title="Attractor change notifications"/>
+    <EditTextPreference
+        android:key="attractorChangeCooldown"
+        android:defaultValue="24"
+        android:selectAllOnFocus="true"
+        android:singleLine="false"
+        android:title="Cooldown for attractor change"
+        android:summary="Set the cooldown in hours (0 - no cooldown)"/>
+</PreferenceScreen>
