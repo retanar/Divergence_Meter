@@ -6,8 +6,11 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import com.vlprojects.divergence.DivergenceMeter.getDivergenceValuesOrGenerate
 import com.vlprojects.divergence.DivergenceMeter.saveDivergence
 import com.vlprojects.divergence.databinding.ActivityMainBinding
@@ -21,6 +24,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // TODO: Careful, delete first line and change next to false for release version
+        PreferenceManager.getDefaultSharedPreferences(this).edit().clear().apply()
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, true)
 
         prefs = getSharedPreferences(SHARED_FILENAME, 0)
         setDivergenceText()
@@ -75,5 +82,22 @@ class MainActivity : AppCompatActivity() {
     private val onDivergenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, tag ->
         if (tag == SHARED_CURRENT_DIVERGENCE)
             setDivergenceText()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.settings_menu -> {
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

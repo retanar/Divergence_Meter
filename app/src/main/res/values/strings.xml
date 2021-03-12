@@ -12,4 +12,5 @@
     <string name="resize_widget_guide">To resize the widget, hold it and release.
         You\'ll see the dots around it that you can move.
     </string>
+    <string name="menu_settings">Settings</string>
 </resources>
