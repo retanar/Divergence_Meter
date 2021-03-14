@@ -26,8 +26,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // TODO: Careful, delete first line and change next to false for release version
-        PreferenceManager.getDefaultSharedPreferences(this).edit().clear().apply()
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, true)
+//        PreferenceManager.getDefaultSharedPreferences(this).edit().clear().apply()
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
 
         prefs = getSharedPreferences(SHARED_FILENAME, 0)
         setDivergenceText()
@@ -44,8 +44,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun changeDivergence(prefs: SharedPreferences) {
         val userDiv = binding.userDivergence.text.toString()
-        if (userDiv.isBlank())
+        if (userDiv.isBlank()) {
+            updateWidget()
+            Toast.makeText(this, "Autoupdate!", Toast.LENGTH_SHORT).show()
             return
+        }
 
         val userDivNumber = (userDiv.toDouble() * MILLION).toInt()
         if (userDivNumber !in ALL_RANGE) {
