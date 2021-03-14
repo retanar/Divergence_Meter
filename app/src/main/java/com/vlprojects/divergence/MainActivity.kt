@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         prefs = getSharedPreferences(SHARED_FILENAME, 0)
         setDivergenceText()
+
         binding.changeDivergenceButton.setOnClickListener { changeDivergence(prefs) }
         prefs.registerOnSharedPreferenceChangeListener(onDivergenceChangeListener)
     }
@@ -83,6 +84,8 @@ class MainActivity : AppCompatActivity() {
         if (tag == SHARED_CURRENT_DIVERGENCE)
             setDivergenceText()
     }
+
+    /** Menu **/
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
