@@ -6,9 +6,9 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.os.Build
-//import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
+import androidx.preference.PreferenceManager
 import com.vlprojects.divergence.DivergenceMeter.getDivergenceValuesOrGenerate
 import com.vlprojects.divergence.DivergenceMeter.saveDivergence
 import java.util.Date
@@ -18,13 +18,6 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
 
-//        val prefs = context.getSharedPreferences(SHARED_FILENAME, 0)
-//        val (currentDiv, nextDiv) = prefs.getDivergenceValuesOrGenerate()
-//        Log.d(
-//            "DivergenceWidget",
-//            "onEnabled() call. Current divergence = $currentDiv; Next divergence = $nextDiv"
-//        )
-
         createNotificationChannel(context)
     }
 
@@ -32,11 +25,15 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
 
         val prefs = context.getSharedPreferences(SHARED_FILENAME, 0)
+        val settings = PreferenceManager.getDefaultSharedPreferences(context)
+
         val (currentDiv, nextDiv) = prefs.getDivergenceValuesOrGenerate()
         val nextDivDigits = DivergenceMeter.splitIntegerToDigits(nextDiv)
 
         DivergenceMeter.checkAttractorChange(currentDiv, nextDiv)?.let {
-            sendNotification(context, "Welcome to $it attractor field")
+            if (settings.getBoolean(SHARED_NOTIFICATIONS, true))
+                sendNotification(context, "Welcome to $it attractor field")
+
             prefs.edit()
                 .putLong(SHARED_LAST_ATTRACTOR_CHANGE, Date().time)
                 .apply()
@@ -50,7 +47,11 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
 
         // Secondly, save new divergence to shared prefs
         val lastAttractorChange = prefs.getLong(SHARED_LAST_ATTRACTOR_CHANGE, 0)
-        val newDiv = DivergenceMeter.generateBalancedDivergenceWithCooldown(nextDiv, lastAttractorChange)
+        val newDiv = DivergenceMeter.generateBalancedDivergenceWithCooldown(
+            nextDiv,
+            lastAttractorChange,
+            settings.getString(SHARED_ATTRACTOR_COOLDOWN_HOURS, "24")!!.toLong() * 60 * 60 * 1000
+        )
         prefs.saveDivergence(nextDiv, newDiv)
     }
 

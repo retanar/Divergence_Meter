@@ -14,8 +14,13 @@ object DivergenceMeter {
 
     fun generateRandomDivergence() = Random.nextInt(ALL_RANGE.range)
 
-    fun generateBalancedDivergenceWithCooldown(currentDiv: Int, lastTimeChanged: Long): Int {
-        val cooldownTime = Date().time - ATTRACTOR_CHANGE_COOLDOWN_MS
+    fun generateBalancedDivergenceWithCooldown(
+        currentDiv: Int,
+        lastTimeChanged: Long,
+        cooldownMs: Long = ATTRACTOR_CHANGE_COOLDOWN_MS
+    ): Int {
+        val cooldownTime = Date().time - cooldownMs
+        Log.d("DivergenceMeter", "Cooldown: ${lastTimeChanged - cooldownTime} (positive - time you need to wait)")
         return if (lastTimeChanged < cooldownTime)
             generateBalancedDivergence(currentDiv, ALL_RANGE)
         else
@@ -27,8 +32,9 @@ object DivergenceMeter {
 //            throw IllegalArgumentException("Current divergence ($currentDiv) is not in attractor's range (${attractor.range})")
             val randomDiv = generateRandomDivergence()
             Log.e(
-                "DivergenceMeter", "Error in generateBalancedDivergence(): " +
-                        "currentDiv was not in Attractor's range. Generated random divergence: $randomDiv"
+                "DivergenceMeter",
+                "Error in generateBalancedDivergence(): currentDiv was not in Attractor's range. " +
+                        "Generated random divergence: $randomDiv"
             )
             return randomDiv
         }
@@ -101,12 +107,14 @@ object DivergenceMeter {
         }
     }
 
+    // TODO: test this change
     // Returns new attractor name or null if attractor hasn't been changed
-    fun checkAttractorChange(oldDiv: Int, newDiv: Int): String? =
-        with(getAttractor(newDiv)) {
-            if (oldDiv !in this) this.name
-            else null
-        }
+    fun checkAttractorChange(oldDiv: Int, newDiv: Int): String? {
+        val attractor = getAttractor(oldDiv)
+        return if (newDiv !in attractor)
+            attractor.name
+        else null
+    }
 
     // idk if I should somehow simplify this
     fun splitIntegerToDigits(number: Int): IntArray {
