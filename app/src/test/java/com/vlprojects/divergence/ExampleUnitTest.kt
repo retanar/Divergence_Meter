@@ -1,18 +1,19 @@
 package com.vlprojects.divergence
 
+import com.vlprojects.divergence.logic.ALL_RANGE
+import com.vlprojects.divergence.logic.DivergenceMeter
+import com.vlprojects.divergence.logic.MILLION
+import com.vlprojects.divergence.logic.attractors
+import org.junit.Assert
 import org.junit.Test
 import java.util.Date
 
 class ExampleUnitTest {
-    @Test
-    fun test() {
-
-    }
 
     @Test
     fun zeroCooldownTest() {
         val divergence = 999_999
-        val attractor = DivergenceMeter.getAttractor(divergence)
+        val attractor = DivergenceMeter.getAttractor(divergence)!!
         val lastTimeChanged = Date().time - 1000        // One second ago
         val cooldownMs = 0L
 
@@ -24,7 +25,36 @@ class ExampleUnitTest {
             }
         }
 
-        println("Attractor haven't been changed")
-        throw RuntimeException("Attractor haven't been changed")
+        throw AssertionError("Attractor haven't been changed")
+    }
+
+    @Test
+    fun oldDivergenceOutOfAllRange() {
+        val oldDiv = ALL_RANGE.range.last + MILLION / 2
+        val newDiv1 = ALL_RANGE.range.last - MILLION / 2
+        val newDiv2 = ALL_RANGE.range.last + MILLION / 2
+
+        Assert.assertNull(
+            "Expected ALL_RANGE when the divergence is out of range",
+            DivergenceMeter.getAttractor(oldDiv)
+        )
+        Assert.assertNull(
+            "Expected null when old divergence is out of range",
+            DivergenceMeter.checkAttractorChange(oldDiv, newDiv1)
+        )
+        Assert.assertNull(
+            "Expected null when new divergence is out of range",
+            DivergenceMeter.checkAttractorChange(oldDiv, newDiv2)
+        )
+    }
+
+    @Test
+    fun getCoefficientTest() {
+        val coefRange = -25000..25000
+        val div1 = 0
+        val div2 = attractors.random().range.last
+//        val divOutOfRange = ALL_RANGE.range.last + 2_123_456
+        Assert.assertTrue(DivergenceMeter.getCoefficient(div1) in coefRange)
+        Assert.assertTrue(DivergenceMeter.getCoefficient(div2) in coefRange)
     }
 }
