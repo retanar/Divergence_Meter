@@ -11,9 +11,15 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
-import com.vlprojects.divergence.DivergenceMeter.getDivergenceValuesOrGenerate
-import com.vlprojects.divergence.DivergenceMeter.saveDivergence
+import androidx.viewbinding.BuildConfig
 import com.vlprojects.divergence.databinding.ActivityMainBinding
+import com.vlprojects.divergence.logic.ALL_RANGE
+import com.vlprojects.divergence.logic.DivergenceMeter.getDivergenceValuesOrGenerate
+import com.vlprojects.divergence.logic.DivergenceMeter.saveDivergence
+import com.vlprojects.divergence.logic.MILLION
+import com.vlprojects.divergence.logic.SHARED_CURRENT_DIVERGENCE
+import com.vlprojects.divergence.logic.SHARED_FILENAME
+import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,6 +30,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (BuildConfig.DEBUG)
+            Timber.plant(Timber.DebugTree())
 
         // TODO: Careful, delete first line and change next to false for release version
 //        PreferenceManager.getDefaultSharedPreferences(this).edit().clear().apply()
@@ -37,9 +46,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setDivergenceText() {
-        val (currentDiv, nextDiv) = prefs.getDivergenceValuesOrGenerate()
-        binding.currentDivergence.text = "%.6f".format(currentDiv / MILLION.toFloat())
-        binding.nextDivergence.text = "%.6f".format(nextDiv / MILLION.toFloat())
+        val div = prefs.getDivergenceValuesOrGenerate()
+        binding.currentDivergence.text = "%.6f".format(div.current / MILLION.toFloat())
+        binding.nextDivergence.text = "%.6f".format(div.next / MILLION.toFloat())
     }
 
     private fun changeDivergence(prefs: SharedPreferences) {

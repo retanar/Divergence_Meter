@@ -1,4 +1,6 @@
-package com.vlprojects.divergence
+package com.vlprojects.divergence.logic
+
+import com.vlprojects.divergence.R
 
 const val SHARED_FILENAME = "divergence_widget"
 const val SHARED_CURRENT_DIVERGENCE = "divergence_value"
