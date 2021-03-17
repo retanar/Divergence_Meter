@@ -1,4 +1,4 @@
-package com.vlprojects.divergence
+package com.vlprojects.divergence.logic
 
 class Attractor(val name: String, val range: IntRange) {
     operator fun contains(value: Int) = value in range

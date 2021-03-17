@@ -3,5 +3,5 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/settings_menu"
           android:title="@string/menu_settings"
-          app:showAsAction="ifRoom"/>
+          app:showAsAction="ifRoom" android:icon="@drawable/ic_baseline_settings_24"/>
 </menu>
