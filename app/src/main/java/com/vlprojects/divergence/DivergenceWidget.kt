@@ -9,8 +9,9 @@ import android.os.Build
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.preference.PreferenceManager
-import com.vlprojects.divergence.DivergenceMeter.getDivergenceValuesOrGenerate
-import com.vlprojects.divergence.DivergenceMeter.saveDivergence
+import com.vlprojects.divergence.logic.*
+import com.vlprojects.divergence.logic.DivergenceMeter.getDivergenceValuesOrGenerate
+import com.vlprojects.divergence.logic.DivergenceMeter.saveDivergence
 import java.util.Date
 
 class DivergenceWidget : android.appwidget.AppWidgetProvider() {
@@ -27,10 +28,10 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         val prefs = context.getSharedPreferences(SHARED_FILENAME, 0)
         val settings = PreferenceManager.getDefaultSharedPreferences(context)
 
-        val (currentDiv, nextDiv) = prefs.getDivergenceValuesOrGenerate()
-        val nextDivDigits = DivergenceMeter.splitIntegerToDigits(nextDiv)
+        val div = prefs.getDivergenceValuesOrGenerate()
+        val nextDivDigits = DivergenceMeter.splitIntegerToDigits(div.next)
 
-        DivergenceMeter.checkAttractorChange(currentDiv, nextDiv)?.let {
+        DivergenceMeter.checkAttractorChange(div.current, div.next)?.let {
             if (settings.getBoolean(SHARED_NOTIFICATIONS, true))
                 sendNotification(context, "Welcome to $it attractor field")
 
@@ -48,11 +49,11 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         // Secondly, save new divergence to shared prefs
         val lastAttractorChange = prefs.getLong(SHARED_LAST_ATTRACTOR_CHANGE, 0)
         val newDiv = DivergenceMeter.generateBalancedDivergenceWithCooldown(
-            nextDiv,
+            div.next,
             lastAttractorChange,
             settings.getString(SHARED_ATTRACTOR_COOLDOWN_HOURS, "24")!!.toLong() * 60 * 60 * 1000
         )
-        prefs.saveDivergence(nextDiv, newDiv)
+        prefs.saveDivergence(div.next, newDiv)
     }
 
     private fun updateAppWidget(
@@ -81,7 +82,7 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
     /** Notifications **/
 
     private fun sendNotification(context: Context, text: String) {
-//        Log.d("DivergenceWidget", "sendNotification() call with text = \"$text\"")
+//        Timber.d("DivergenceWidget", "sendNotification() call with text = \"$text\"")
         val notifyManager = getNotificationManager(context)
         val builder = NotificationCompat.Builder(context, CHANGE_WORLDLINE_NOTIFICATION_CHANNEL)
             .setSmallIcon(R.drawable.ic_notification)
