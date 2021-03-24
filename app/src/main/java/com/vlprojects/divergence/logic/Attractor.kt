@@ -4,7 +4,7 @@ class Attractor(val name: String, val range: IntRange) {
     operator fun contains(value: Int) = value in range
 }
 
-val OMEGA_ATTRACTOR = Attractor("Omega", -MILLION until 0)  // Inclusive -1000000 is needed for getCoefficient()
+val OMEGA_ATTRACTOR = Attractor("Omega", -MILLION until 0)        // Inclusive -1000000 is needed for getCoefficient()
 val ALPHA_ATTRACTOR = Attractor("Alpha", 0 until MILLION)
 val BETA_ATTRACTOR = Attractor("Beta", MILLION until 2 * MILLION)
 val GAMMA_ATTRACTOR = Attractor("Gamma", 2 * MILLION until 3 * MILLION)
