@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <SwitchPreference
         android:key="attractor_notifications"
         android:defaultValue="true"
-        android:title="Attractor change notifications"/>
+        android:title="Attractor change notifications"
+        app:iconSpaceReserved="false"/>
+    <SwitchPreference
+        android:key="known_worldline_notifications"
+        android:defaultValue="true"
+        android:title="Known Worldlines notifications"
+        android:summary="Notifications for known worldlines (such as 1.048596)"
+        app:iconSpaceReserved="false"/>
     <EditTextPreference
         android:key="attractor_change_cooldown"
         android:defaultValue="24"
         android:selectAllOnFocus="true"
         android:singleLine="false"
         android:title="Cooldown for attractor change"
-        android:summary="Set the cooldown in hours (0 - no cooldown)"/>
+        android:summary="Set the cooldown in hours (0 - no cooldown)"
+        app:iconSpaceReserved="false"/>
 </PreferenceScreen>

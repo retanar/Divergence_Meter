@@ -12,6 +12,7 @@ import androidx.preference.PreferenceManager
 import com.vlprojects.divergence.logic.*
 import com.vlprojects.divergence.logic.DivergenceMeter.getDivergenceValuesOrGenerate
 import com.vlprojects.divergence.logic.DivergenceMeter.saveDivergence
+import timber.log.Timber
 import java.util.Date
 
 class DivergenceWidget : android.appwidget.AppWidgetProvider() {
@@ -31,14 +32,7 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         val div = prefs.getDivergenceValuesOrGenerate()
         val nextDivDigits = DivergenceMeter.splitIntegerToDigits(div.next)
 
-        DivergenceMeter.checkAttractorChange(div.current, div.next)?.let {
-            if (settings.getBoolean(SHARED_NOTIFICATIONS, true))
-                sendNotification(context, "Welcome to $it attractor field")
-
-            prefs.edit()
-                .putLong(SHARED_LAST_ATTRACTOR_CHANGE, Date().time)
-                .apply()
-        }
+        onDivergenceChange(context, div)
 
         // Firstly, apply saved next divergence to the widgets,
         // so that the divergence can be updated to a specific number
@@ -51,7 +45,7 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         val newDiv = DivergenceMeter.generateBalancedDivergenceWithCooldown(
             div.next,
             lastAttractorChange,
-            settings.getString(SHARED_ATTRACTOR_COOLDOWN_HOURS, "24")!!.toLong() * 60 * 60 * 1000
+            (settings.getString(SETTING_ATTRACTOR_COOLDOWN_HOURS, null)?.toLongOrNull() ?: 24L) * 60 * 60 * 1000
         )
         prefs.saveDivergence(div.next, newDiv)
     }
@@ -79,14 +73,33 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         appWidgetManager.updateAppWidget(appWidgetId, views)
     }
 
+    private fun onDivergenceChange(context: Context, divergences: DivergenceValues) {
+        val prefs = context.getSharedPreferences(SHARED_FILENAME, 0)
+        val settings = PreferenceManager.getDefaultSharedPreferences(context)
+
+        DivergenceMeter.checkAttractorChange(divergences.current, divergences.next)?.let {
+            if (settings.getBoolean(SETTING_ATTRACTOR_NOTIFICATIONS, true))
+                sendNotification(context, "Attractor change", "Welcome to $it attractor field")
+
+            prefs.edit()
+                .putLong(SHARED_LAST_ATTRACTOR_CHANGE, Date().time)
+                .apply()
+        }
+
+        worldlines.find { worldline -> worldline.divergence == divergences.next }?.let { worldline ->
+            if (settings.getBoolean(SETTING_WORLDLINE_NOTOFICATIONS, true))
+                sendNotification(context, "Worldline change", worldline.message)
+        }
+    }
+
     /** Notifications **/
 
-    private fun sendNotification(context: Context, text: String) {
-//        Timber.d("DivergenceWidget", "sendNotification() call with text = \"$text\"")
+    private fun sendNotification(context: Context, title: String, text: String) {
+        Timber.d("sendNotification() call with text = \"$text\"")
         val notifyManager = getNotificationManager(context)
         val builder = NotificationCompat.Builder(context, CHANGE_WORLDLINE_NOTIFICATION_CHANNEL)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle("Worldline change!")
+            .setContentTitle(title)
             .setContentText(text)
             .setSound(null)
         notifyManager.notify(NOTIFICATION_ID, builder.build())

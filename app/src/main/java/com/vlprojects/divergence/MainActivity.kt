@@ -13,12 +13,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import androidx.viewbinding.BuildConfig
 import com.vlprojects.divergence.databinding.ActivityMainBinding
-import com.vlprojects.divergence.logic.ALL_RANGE
+import com.vlprojects.divergence.logic.*
 import com.vlprojects.divergence.logic.DivergenceMeter.getDivergenceValuesOrGenerate
 import com.vlprojects.divergence.logic.DivergenceMeter.saveDivergence
-import com.vlprojects.divergence.logic.MILLION
-import com.vlprojects.divergence.logic.SHARED_CURRENT_DIVERGENCE
-import com.vlprojects.divergence.logic.SHARED_FILENAME
 import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
@@ -34,7 +31,6 @@ class MainActivity : AppCompatActivity() {
         if (BuildConfig.DEBUG)
             Timber.plant(Timber.DebugTree())
 
-        // TODO: Careful, delete first line and change next to false for release version
 //        PreferenceManager.getDefaultSharedPreferences(this).edit().clear().apply()
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
 
@@ -91,9 +87,10 @@ class MainActivity : AppCompatActivity() {
         pendingIntent.send()
     }
 
+    // TODO: won't work it there is no widget
     // Using field so it won't be garbage collected
     private val onDivergenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, tag ->
-        if (tag == SHARED_CURRENT_DIVERGENCE)
+        if (tag == SHARED_CURRENT_DIVERGENCE || tag == SHARED_NEXT_DIVERGENCE)
             setDivergenceText()
     }
 
