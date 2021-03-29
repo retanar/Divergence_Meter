@@ -87,7 +87,8 @@ class MainActivity : AppCompatActivity() {
         pendingIntent.send()
     }
 
-    // TODO: won't work it there is no widget
+    // TODO: won't work if there is no widget
+    // TODO: remove next divergence on release
     // Using field so it won't be garbage collected
     private val onDivergenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, tag ->
         if (tag == SHARED_CURRENT_DIVERGENCE || tag == SHARED_NEXT_DIVERGENCE)

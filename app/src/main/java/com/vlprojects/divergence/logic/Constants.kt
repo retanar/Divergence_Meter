@@ -16,7 +16,7 @@ const val NOTIFICATION_ID = 101
 
 const val MILLION = 1_000_000
 const val UNDEFINED_DIVERGENCE = Int.MIN_VALUE
-const val ATTRACTOR_CHANGE_COOLDOWN_MS = 86_400_000L        // 1 day
+const val ATTRACTOR_DEFAULT_COOLDOWN_MS = 86_400_000L        // 1 day
 
 val nixieNumberDrawables by lazy {
     arrayOf(

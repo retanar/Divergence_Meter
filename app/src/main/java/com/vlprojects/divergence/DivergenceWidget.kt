@@ -86,7 +86,9 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
                 .apply()
         }
 
-        worldlines.find { worldline -> worldline.divergence == divergences.next }?.let { worldline ->
+        worldlines.find { worldline ->
+            worldline.divergence == divergences.next
+        }?.let { worldline ->
             if (settings.getBoolean(SETTING_WORLDLINE_NOTOFICATIONS, true))
                 sendNotification(context, "Worldline change", worldline.message)
         }
@@ -110,7 +112,7 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
             val notifyManager = getNotificationManager(context)
             val channel = NotificationChannel(
                 CHANGE_WORLDLINE_NOTIFICATION_CHANNEL,
-                "Change worldline notification",
+                "Change worldline notifications",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
             channel.setSound(null, null)

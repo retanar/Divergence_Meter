@@ -18,7 +18,7 @@
         android:key="attractor_change_cooldown"
         android:defaultValue="24"
         android:selectAllOnFocus="true"
-        android:singleLine="false"
+        android:singleLine="true"
         android:title="Cooldown for attractor change"
         android:summary="Set the cooldown in hours (0 - no cooldown)"
         app:iconSpaceReserved="false"/>

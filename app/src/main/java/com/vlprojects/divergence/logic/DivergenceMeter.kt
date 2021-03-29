@@ -17,7 +17,7 @@ object DivergenceMeter {
     fun generateBalancedDivergenceWithCooldown(
         currentDiv: Int,
         lastTimeChanged: Long,
-        cooldownMs: Long = ATTRACTOR_CHANGE_COOLDOWN_MS
+        cooldownMs: Long = ATTRACTOR_DEFAULT_COOLDOWN_MS
     ): Int {
         val cooldownTime = Date().time - cooldownMs
         Timber.d("Cooldown: ${lastTimeChanged - cooldownTime} (positive - time you need to wait)")

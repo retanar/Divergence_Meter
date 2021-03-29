@@ -17,7 +17,7 @@ val attractors = arrayOf(
     BETA_ATTRACTOR,
     GAMMA_ATTRACTOR,
     DELTA_ATTRACTOR,
-//    EPSILON_ATTRACTOR,
+    EPSILON_ATTRACTOR,
 )
 
 val ALL_RANGE = Attractor("All", attractors.first().range.first..attractors.last().range.last)
