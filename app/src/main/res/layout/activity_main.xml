@@ -51,7 +51,7 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" android:layout_marginBottom="12dp" android:visibility="visible">
+            android:layout_height="match_parent" android:layout_marginBottom="12dp" android:visibility="gone">
             <TextView
                 android:text="@string/next_divergence"
                 android:layout_width="wrap_content"
