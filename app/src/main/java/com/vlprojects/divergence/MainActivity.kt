@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         prefs = getSharedPreferences(SHARED_FILENAME, 0)
         setDivergenceText()
 
-        binding.changeDivergenceButton.setOnClickListener { changeDivergence(prefs) }
+        binding.changeDivergenceButton.setOnClickListener { changeDivergence() }
         prefs.registerOnSharedPreferenceChangeListener(onDivergenceChangeListener)
     }
 
@@ -47,11 +47,11 @@ class MainActivity : AppCompatActivity() {
         binding.nextDivergence.text = "%.6f".format(div.next / MILLION.toFloat())
     }
 
-    private fun changeDivergence(prefs: SharedPreferences) {
+    private fun changeDivergence() {
         val userDiv = binding.userDivergence.text.toString()
         if (userDiv.isBlank()) {
-            updateWidget()
-            Toast.makeText(this, "Autoupdate!", Toast.LENGTH_SHORT).show()
+            if (updateWidgets())
+                Toast.makeText(this, "Autoupdate!", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -69,31 +69,41 @@ class MainActivity : AppCompatActivity() {
         }
 
         prefs.saveDivergence(nextDiv = userDivNumber)
-        updateWidget()
 
-        Toast.makeText(this, "Updated!", Toast.LENGTH_SHORT).show()
+        if (updateWidgets())
+            Toast.makeText(this, "Updated!", Toast.LENGTH_SHORT).show()
     }
 
-    private fun updateWidget() {
-        val intentUpdate = Intent(this, DivergenceWidget::class.java)
-        intentUpdate.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-
+    // Returns false if there are no widgets or true otherwise
+    private fun updateWidgets(): Boolean {
         val ids = AppWidgetManager.getInstance(application).getAppWidgetIds(
             ComponentName(application, DivergenceWidget::class.java)
         )
+        if (ids.isEmpty()) {
+            Toast.makeText(
+                this,
+                "There are no widgets, please add one before changing the divergence",
+                Toast.LENGTH_LONG
+            ).show()
+            return false
+        }
+
+        val intentUpdate = Intent(this, DivergenceWidget::class.java)
+        intentUpdate.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
         intentUpdate.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
 
         val pendingIntent = PendingIntent.getBroadcast(this, 0, intentUpdate, PendingIntent.FLAG_UPDATE_CURRENT)
         pendingIntent.send()
+
+        return true
     }
 
-    // TODO: won't work if there is no widget
-    // TODO: remove next divergence on release
     // Using field so it won't be garbage collected
-    private val onDivergenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, tag ->
-        if (tag == SHARED_CURRENT_DIVERGENCE || tag == SHARED_NEXT_DIVERGENCE)
-            setDivergenceText()
-    }
+    private val onDivergenceChangeListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { _, tag ->
+            if (tag == SHARED_CURRENT_DIVERGENCE)
+                setDivergenceText()
+        }
 
     /** Menu **/
 

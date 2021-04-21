@@ -89,7 +89,7 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         worldlines.find { worldline ->
             worldline.divergence == divergences.next
         }?.let { worldline ->
-            if (settings.getBoolean(SETTING_WORLDLINE_NOTOFICATIONS, true))
+            if (settings.getBoolean(SETTING_WORLDLINE_NOTIFICATIONS, true))
                 sendNotification(context, "Worldline change", worldline.message)
         }
     }
