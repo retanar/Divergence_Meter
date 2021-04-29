@@ -4,9 +4,10 @@ Android divergence meter widget like that in Steins;Gate.
 ### Features
 - Displaying divergence number in nixie tubes;
 - Changing the divergence every 2 hours;
+- 6 attractor fields: Alpha, Beta, Gamma, Delta, Epsilon and Omega;
 - Balanced random system, that lowers the chance of going to another attractor field;
 - Ability to set your own divergence number;
-- Notifications, when changing attractor field.
+- Notifications, when changing attractor field and for known worldlines.
 
 ### Images
 Normal view:
