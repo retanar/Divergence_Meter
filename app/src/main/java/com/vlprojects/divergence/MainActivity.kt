@@ -17,6 +17,7 @@ import com.vlprojects.divergence.logic.*
 import com.vlprojects.divergence.logic.DivergenceMeter.getDivergenceValuesOrGenerate
 import com.vlprojects.divergence.logic.DivergenceMeter.saveDivergence
 import timber.log.Timber
+import kotlin.math.round
 
 class MainActivity : AppCompatActivity() {
 
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        val userDivNumber = (userDiv.toDouble() * MILLION).toInt()
+        val userDivNumber = round(userDiv.toDouble() * MILLION).toInt()
         if (userDivNumber !in ALL_RANGE) {
             Toast.makeText(
                 this,

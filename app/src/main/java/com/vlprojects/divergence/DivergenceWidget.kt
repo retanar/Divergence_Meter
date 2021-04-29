@@ -19,7 +19,6 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
 
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
-
         createNotificationChannel(context)
     }
 
@@ -42,10 +41,13 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
 
         // Secondly, save new divergence to shared prefs
         val lastAttractorChange = prefs.getLong(SHARED_LAST_ATTRACTOR_CHANGE, 0)
+        // TODO: empty preference should be checked (and return 0)
+        val cooldown =
+            (settings.getString(SETTING_ATTRACTOR_COOLDOWN_HOURS, null)?.toLongOrNull() ?: 0) * 60 * 60 * 1000
         val newDiv = DivergenceMeter.generateBalancedDivergenceWithCooldown(
             div.next,
             lastAttractorChange,
-            (settings.getString(SETTING_ATTRACTOR_COOLDOWN_HOURS, null)?.toLongOrNull() ?: 24L) * 60 * 60 * 1000
+            cooldown
         )
         prefs.saveDivergence(div.next, newDiv)
     }
@@ -77,9 +79,9 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         val prefs = context.getSharedPreferences(SHARED_FILENAME, 0)
         val settings = PreferenceManager.getDefaultSharedPreferences(context)
 
-        DivergenceMeter.checkAttractorChange(divergences.current, divergences.next)?.let {
-            if (settings.getBoolean(SETTING_ATTRACTOR_NOTIFICATIONS, true))
-                sendNotification(context, "Attractor change", "Welcome to $it attractor field")
+        DivergenceMeter.checkAttractorChange(divergences.current, divergences.next)?.let { attractorName ->
+            if (settings.getBoolean(SETTING_ATTRACTOR_NOTIFICATIONS, false))
+                sendNotification(context, "Attractor change", "Welcome to $attractorName attractor field")
 
             prefs.edit()
                 .putLong(SHARED_LAST_ATTRACTOR_CHANGE, Date().time)
@@ -89,8 +91,8 @@ class DivergenceWidget : android.appwidget.AppWidgetProvider() {
         worldlines.find { worldline ->
             worldline.divergence == divergences.next
         }?.let { worldline ->
-            if (settings.getBoolean(SETTING_WORLDLINE_NOTIFICATIONS, true))
-                sendNotification(context, "Worldline change", worldline.message)
+            if (settings.getBoolean(SETTING_WORLDLINE_NOTIFICATIONS, false))
+                sendNotification(context, "Worldline ${worldline.divergence / MILLION.toFloat()}", worldline.message)
         }
     }
 
