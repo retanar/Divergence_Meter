@@ -66,8 +66,7 @@ object DivergenceMeter {
         (-getAttractor(currentDiv)!!.range.first + currentDiv - 500_000) /
                 -(MILLION / 2 / MAX_COEFFICIENT)
 
-    fun getAttractor(div: Int): Attractor? =
-        attractors.find { div in it }
+    fun getAttractor(div: Int): Attractor? = attractors.find { div in it }
 
     fun SharedPreferences.getDivergenceValuesOrGenerate(): DivergenceValues {
         var currentDiv = getInt(SHARED_CURRENT_DIVERGENCE, UNDEFINED_DIVERGENCE)

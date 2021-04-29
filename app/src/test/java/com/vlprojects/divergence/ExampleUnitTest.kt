@@ -1,9 +1,6 @@
 package com.vlprojects.divergence
 
-import com.vlprojects.divergence.logic.ALL_RANGE
-import com.vlprojects.divergence.logic.DivergenceMeter
-import com.vlprojects.divergence.logic.MILLION
-import com.vlprojects.divergence.logic.attractors
+import com.vlprojects.divergence.logic.*
 import org.junit.Assert
 import org.junit.Test
 import java.util.Date
