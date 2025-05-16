@@ -1,6 +1,6 @@
-package com.vlprojects.divergence
+package retanar.divergence
 
-import com.vlprojects.divergence.logic.*
+import retanar.divergence.logic.*
 import org.junit.Assert
 import org.junit.Test
 import java.util.Date

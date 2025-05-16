@@ -1,4 +1,4 @@
-package com.vlprojects.divergence.logic
+package retanar.divergence.logic
 
 class Worldline(val divergence: Int, val message: String)
 

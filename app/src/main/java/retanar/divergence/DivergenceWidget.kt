@@ -1,4 +1,4 @@
-package com.vlprojects.divergence
+package retanar.divergence
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -9,9 +9,9 @@ import android.os.Build
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.preference.PreferenceManager
-import com.vlprojects.divergence.logic.*
-import com.vlprojects.divergence.logic.DivergenceMeter.getDivergenceValuesOrGenerate
-import com.vlprojects.divergence.logic.DivergenceMeter.saveDivergence
+import retanar.divergence.logic.*
+import retanar.divergence.logic.DivergenceMeter.getDivergenceValuesOrGenerate
+import retanar.divergence.logic.DivergenceMeter.saveDivergence
 import timber.log.Timber
 import java.util.Date
 

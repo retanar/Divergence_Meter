@@ -1,4 +1,4 @@
-package com.vlprojects.divergence
+package retanar.divergence
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

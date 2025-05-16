@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.vlprojects.divergence"
+    namespace = "retanar.divergence"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.vlprojects.divergence"
+        applicationId = "retanar.divergence"
         minSdk = 21
         targetSdk = 35
         versionCode = 1

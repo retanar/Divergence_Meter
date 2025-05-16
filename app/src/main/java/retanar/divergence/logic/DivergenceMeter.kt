@@ -1,4 +1,4 @@
-package com.vlprojects.divergence.logic
+package retanar.divergence.logic
 
 import android.content.SharedPreferences
 import timber.log.Timber

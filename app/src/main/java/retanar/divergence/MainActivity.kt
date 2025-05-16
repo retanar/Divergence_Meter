@@ -1,4 +1,4 @@
-package com.vlprojects.divergence
+package retanar.divergence
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
@@ -11,10 +11,10 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
-import com.vlprojects.divergence.databinding.ActivityMainBinding
-import com.vlprojects.divergence.logic.*
-import com.vlprojects.divergence.logic.DivergenceMeter.getDivergenceValuesOrGenerate
-import com.vlprojects.divergence.logic.DivergenceMeter.saveDivergence
+import retanar.divergence.databinding.ActivityMainBinding
+import retanar.divergence.logic.*
+import retanar.divergence.logic.DivergenceMeter.getDivergenceValuesOrGenerate
+import retanar.divergence.logic.DivergenceMeter.saveDivergence
 import timber.log.Timber
 import kotlin.math.round
 
