@@ -11,7 +11,6 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
-import androidx.viewbinding.BuildConfig
 import com.vlprojects.divergence.databinding.ActivityMainBinding
 import com.vlprojects.divergence.logic.*
 import com.vlprojects.divergence.logic.DivergenceMeter.getDivergenceValuesOrGenerate
