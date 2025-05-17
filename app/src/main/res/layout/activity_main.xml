@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
+
+    <LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent"
+                  android:orientation="vertical" android:layout_margin="8dp">
+        <TextView
+            android:text="@string/add_widget_guide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/textView"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="20sp"
+            android:layout_marginBottom="6dp"/>
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_height="wrap_content"
+            android:text="@string/resize_widget_guide"
+            android:layout_width="match_parent"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="20sp"/>
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider"
+            android:layout_margin="8dp"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:layout_marginBottom="8dp">
+            <TextView
+                android:id="@+id/textView1"
+                android:text="@string/current_divergence"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/currentDivergence"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" android:layout_weight="1"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="20sp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                tools:text="@string/default_divergence"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:layout_marginBottom="12dp" android:visibility="gone">
+            <TextView
+                android:text="@string/next_divergence"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/textView2"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/nextDivergence"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" android:layout_weight="1"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="20sp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                tools:text="@string/default_divergence"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/userDivergence"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:inputType="numberSigned|numberDecimal"
+                android:hint="@string/hint_enter_new_divergence_here"
+                android:layout_marginBottom="16dp"
+                android:importantForAutofill="no" android:maxLength="9"/>
+            <Button
+                android:id="@+id/changeDivergenceButton"
+                android:text="@string/change"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"/>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

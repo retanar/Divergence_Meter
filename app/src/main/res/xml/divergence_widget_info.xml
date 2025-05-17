@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:minWidth="200dp"
+    android:minHeight="40dp"
+    android:updatePeriodMillis="7200000"
+    android:previewImage="@drawable/appwidget_preview"
+    android:initialLayout="@layout/divergence_widget"
+    android:resizeMode="vertical|horizontal"
+    android:widgetCategory="home_screen"
+    android:initialKeyguardLayout="@layout/divergence_widget"
+    tools:ignore="UnusedAttribute">
+</appwidget-provider>
