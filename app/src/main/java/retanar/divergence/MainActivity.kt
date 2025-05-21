@@ -1,27 +1,31 @@
 package retanar.divergence
 
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
-import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.preference.PreferenceManager
+import kotlinx.coroutines.launch
 import retanar.divergence.databinding.ActivityMainBinding
-import retanar.divergence.logic.*
-import retanar.divergence.logic.DivergenceMeter.getDivergenceValuesOrGenerate
-import retanar.divergence.logic.DivergenceMeter.saveDivergence
+import retanar.divergence.logic.ALL_RANGE
+import retanar.divergence.logic.DivergenceMeter.getDivergenceOrGenerate
+import retanar.divergence.logic.MILLION
+import retanar.divergence.logic.PREFS_CURRENT_DIVERGENCE
+import retanar.divergence.logic.UNDEFINED_DIVERGENCE
 import timber.log.Timber
 import kotlin.math.round
 
 class MainActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityMainBinding
-    private lateinit var prefs: SharedPreferences
+    private val prefs get() = DI.preferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,20 +35,37 @@ class MainActivity : AppCompatActivity() {
         if (BuildConfig.DEBUG)
             Timber.plant(Timber.DebugTree())
 
-//        PreferenceManager.getDefaultSharedPreferences(this).edit().clear().apply()
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
 
-        prefs = getSharedPreferences(SHARED_FILENAME, 0)
+        setupViews()
+        setupListeners()
+    }
+
+    private fun setupViews() = with(binding) {
         setDivergenceText()
 
-        binding.changeDivergenceButton.setOnClickListener { changeDivergence() }
-        prefs.registerOnSharedPreferenceChangeListener(onDivergenceChangeListener)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                WidgetUpdateWorker.getStatus()
+                    .collect { workInfos ->
+                        if (workInfos.isEmpty()) return@collect
+                        val info = workInfos.first().state.name.lowercase()
+                        workerStatus.text = getString(R.string.worker_status, info)
+                    }
+            }
+        }
+    }
+
+    private fun setupListeners() = with(binding) {
+        changeDivergenceButton.setOnClickListener { changeDivergence() }
+        stopWorkerUpdates.setOnClickListener { WidgetUpdateWorker.stopWork() }
+        startWorkerUpdates.setOnClickListener { WidgetUpdateWorker.enqueueWork() }
     }
 
     private fun setDivergenceText() {
-        val div = prefs.getDivergenceValuesOrGenerate()
-        binding.currentDivergence.text = "%.6f".format(div.current / MILLION.toFloat())
-        binding.nextDivergence.text = "%.6f".format(div.next / MILLION.toFloat())
+        val div = prefs.getDivergenceOrGenerate()
+        binding.currentDivergence.text =
+            getString(R.string.current_divergence, div / MILLION.toFloat())
     }
 
     private fun changeDivergence() {
@@ -68,14 +89,12 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        prefs.saveDivergence(nextDiv = userDivNumber)
-
-        if (updateWidgets())
+        if (updateWidgets(userDivNumber))
             Toast.makeText(this, "Updated!", Toast.LENGTH_SHORT).show()
     }
 
-    // Returns false if there are no widgets or true otherwise
-    private fun updateWidgets(): Boolean {
+    /** @return `false` if there are no widgets, `true` otherwise */
+    private fun updateWidgets(divergence: Int = UNDEFINED_DIVERGENCE): Boolean {
         val ids = AppWidgetManager.getInstance(application).getAppWidgetIds(
             ComponentName(application, DivergenceWidget::class.java)
         )
@@ -88,24 +107,31 @@ class MainActivity : AppCompatActivity() {
             return false
         }
 
-        val intentUpdate = Intent(this, DivergenceWidget::class.java)
-        intentUpdate.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-        intentUpdate.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
-
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, intentUpdate, PendingIntent.FLAG_UPDATE_CURRENT)
-        pendingIntent.send()
+        if (divergence == UNDEFINED_DIVERGENCE)
+            DivergenceWidget.updateWidgetsWithRandomDivergence(applicationContext)
+        else
+            DivergenceWidget.updateWidgetsWithSpecificDivergence(applicationContext, divergence)
 
         return true
     }
 
     // Using field so it won't be garbage collected
-    private val onDivergenceChangeListener =
-        SharedPreferences.OnSharedPreferenceChangeListener { _, tag ->
-            if (tag == SHARED_CURRENT_DIVERGENCE)
-                setDivergenceText()
-        }
+    private val onDivergenceChangeListener = OnSharedPreferenceChangeListener { _, key ->
+        if (key == PREFS_CURRENT_DIVERGENCE)
+            setDivergenceText()
+    }
 
-    /** Menu **/
+    override fun onStart() {
+        super.onStart()
+        prefs.registerOnSharedPreferenceChangeListener(onDivergenceChangeListener)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        prefs.unregisterOnSharedPreferenceChangeListener(onDivergenceChangeListener)
+    }
+
+    //<editor-fold desc="Menu">
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
@@ -120,7 +146,10 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+    //</editor-fold>
 }

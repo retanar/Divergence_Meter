@@ -2,14 +2,14 @@ package retanar.divergence.logic
 
 import retanar.divergence.R
 
-const val SHARED_FILENAME = "divergence_widget"
-const val SHARED_CURRENT_DIVERGENCE = "divergence_value"
-const val SHARED_NEXT_DIVERGENCE = "divergence_next_value"
-const val SHARED_LAST_ATTRACTOR_CHANGE = "last_attractor_change_time"
+const val PREFS_FILENAME = "divergence_widget"
+const val PREFS_CURRENT_DIVERGENCE = "divergence_value"
+const val PREFS_LAST_ATTRACTOR_CHANGE = "last_attractor_change_time"
 
 const val SETTING_ATTRACTOR_NOTIFICATIONS = "attractor_notifications"
 const val SETTING_WORLDLINE_NOTIFICATIONS = "known_worldline_notifications"
 const val SETTING_ATTRACTOR_COOLDOWN_HOURS = "attractor_change_cooldown"
+const val SETTING_WIDGET_UPDATE_MINUTES = "widget_autoupdate_delay"
 
 const val CHANGE_WORLDLINE_NOTIFICATION_CHANNEL = "change_worldline_channel"
 const val NOTIFICATION_ID = 101

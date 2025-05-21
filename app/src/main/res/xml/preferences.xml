@@ -4,22 +4,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <SwitchPreference
+        android:defaultValue="true"
         android:key="attractor_notifications"
-        android:defaultValue="true"
         android:title="Attractor change notifications"
-        app:iconSpaceReserved="false"/>
+        app:iconSpaceReserved="false" />
     <SwitchPreference
-        android:key="known_worldline_notifications"
         android:defaultValue="true"
-        android:title="Known Worldlines notifications"
+        android:key="known_worldline_notifications"
         android:summary="Notifications for known worldlines (such as 1.048596)"
-        app:iconSpaceReserved="false"/>
+        android:title="Known worldlines notifications"
+        app:iconSpaceReserved="false" />
     <EditTextPreference
-        android:key="attractor_change_cooldown"
         android:defaultValue="24"
+        android:key="attractor_change_cooldown"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="Cooldown for attractor change"
         android:summary="Set the cooldown in hours (0 - no cooldown)"
-        app:iconSpaceReserved="false"/>
+        android:title="Cooldown for attractor change"
+        app:iconSpaceReserved="false" />
+    <EditTextPreference
+        android:defaultValue="120"
+        android:key="widget_autoupdate_delay"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:summary="Approximate period in minutes (minimum - 15, 0 - no autoupdate)"
+        android:title="Interval between widget updates"
+        app:iconSpaceReserved="false" />
 </PreferenceScreen>

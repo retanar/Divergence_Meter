@@ -1,6 +1,7 @@
 package retanar.divergence.logic
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import timber.log.Timber
 import java.util.Date
 import kotlin.math.absoluteValue
@@ -40,10 +41,10 @@ object DivergenceMeter {
 
         do {
             newDiv = currentDiv +
-                    Random.nextInt(
-                        -DIVERGENCE_CHANGE_STEP + coefficient,
-                        DIVERGENCE_CHANGE_STEP + coefficient
-                    )
+                Random.nextInt(
+                    -DIVERGENCE_CHANGE_STEP + coefficient,
+                    DIVERGENCE_CHANGE_STEP + coefficient
+                )
         } while (newDiv !in attractor)
 
         Timber.d(
@@ -64,39 +65,26 @@ object DivergenceMeter {
      *  - divide by a specific number to create the coefficient */
     fun getCoefficient(currentDiv: Int) =
         (-getAttractor(currentDiv)!!.range.first + currentDiv - 500_000) /
-                -(MILLION / 2 / MAX_COEFFICIENT)
+            -(MILLION / 2 / MAX_COEFFICIENT)
 
     fun getAttractor(div: Int): Attractor? = attractors.find { div in it }
 
-    fun SharedPreferences.getDivergenceValuesOrGenerate(): DivergenceValues {
-        var currentDiv = getInt(SHARED_CURRENT_DIVERGENCE, UNDEFINED_DIVERGENCE)
-        var newDiv = getInt(SHARED_NEXT_DIVERGENCE, UNDEFINED_DIVERGENCE)
+    /** Get stored divergence, or create random and save it. */
+    fun SharedPreferences.getDivergenceOrGenerate(): Int {
+        var currentDiv = getInt(PREFS_CURRENT_DIVERGENCE, UNDEFINED_DIVERGENCE)
 
         if (currentDiv == UNDEFINED_DIVERGENCE) {
-            if (newDiv == UNDEFINED_DIVERGENCE) {
-                newDiv = generateRandomDivergence()
-            }
-            currentDiv = newDiv
-            newDiv = generateBalancedDivergence(currentDiv)
-            saveDivergence(currentDiv, newDiv)
-        } else if (newDiv == UNDEFINED_DIVERGENCE) {
-            newDiv = generateBalancedDivergence(currentDiv)
-            saveDivergence(nextDiv = newDiv)
+            currentDiv = generateRandomDivergence()
+            saveDivergence(currentDiv)
         }
 
-        return DivergenceValues(currentDiv, newDiv)
+        return currentDiv
     }
 
-    fun SharedPreferences.saveDivergence(
-        currentDiv: Int = UNDEFINED_DIVERGENCE,
-        nextDiv: Int = UNDEFINED_DIVERGENCE
-    ) {
-        with(edit()) {
+    fun SharedPreferences.saveDivergence(currentDiv: Int = UNDEFINED_DIVERGENCE) {
+        edit {
             if (currentDiv != UNDEFINED_DIVERGENCE)
-                putInt(SHARED_CURRENT_DIVERGENCE, currentDiv)
-            if (nextDiv != UNDEFINED_DIVERGENCE)
-                putInt(SHARED_NEXT_DIVERGENCE, nextDiv)
-            apply()
+                putInt(PREFS_CURRENT_DIVERGENCE, currentDiv)
         }
     }
 
@@ -123,5 +111,3 @@ object DivergenceMeter {
         return digits
     }
 }
-
-class DivergenceValues(val current: Int, val next: Int)
