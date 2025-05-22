@@ -1,9 +1,7 @@
 package retanar.divergence.logic
 
-import android.content.SharedPreferences
-import androidx.core.content.edit
-import timber.log.Timber
-import java.util.Date
+import retanar.divergence.util.logd
+import retanar.divergence.util.loge
 import kotlin.math.absoluteValue
 import kotlin.random.Random
 import kotlin.random.nextInt
@@ -18,10 +16,11 @@ object DivergenceMeter {
     fun generateBalancedDivergenceWithCooldown(
         currentDiv: Int,
         lastTimeChanged: Long,
-        cooldownMs: Long = ATTRACTOR_DEFAULT_COOLDOWN_MS
+        cooldownMs: Long,
     ): Int {
-        val cooldownTime = Date().time - cooldownMs
-        Timber.d("Cooldown: ${lastTimeChanged - cooldownTime} (positive - time you need to wait)")
+        val cooldownTime = System.currentTimeMillis() - cooldownMs
+        logd { "Cooldown: ${lastTimeChanged - cooldownTime} (positive - time you need to wait)" }
+
         return if (lastTimeChanged < cooldownTime)
             generateBalancedDivergence(currentDiv, ALL_RANGE)
         else
@@ -31,7 +30,10 @@ object DivergenceMeter {
     fun generateBalancedDivergence(currentDiv: Int, attractor: Attractor = ALL_RANGE): Int {
         if (currentDiv !in attractor) {
             val randomDiv = generateRandomDivergence()
-            Timber.e("Error in generateBalancedDivergence(): currentDiv was not in Attractor's range. Generated random divergence: $randomDiv")
+            loge {
+                "Error in generateBalancedDivergence(): currentDiv was not in Attractor's range. " +
+                    "Generated random divergence: $randomDiv"
+            }
             return randomDiv
         }
 
@@ -47,14 +49,13 @@ object DivergenceMeter {
                 )
         } while (newDiv !in attractor)
 
-        Timber.d(
+        logd {
             """generateBalancedDivergence() call.
               |Previous div: $currentDiv;
               |Step limits: (${-DIVERGENCE_CHANGE_STEP + coefficient} ; ${DIVERGENCE_CHANGE_STEP + coefficient});
               |Step: ${newDiv - currentDiv};
               |New div: $newDiv;""".trimMargin()
-        )
-
+        }
         return newDiv
     }
 
@@ -69,26 +70,7 @@ object DivergenceMeter {
 
     fun getAttractor(div: Int): Attractor? = attractors.find { div in it }
 
-    /** Get stored divergence, or create random and save it. */
-    fun SharedPreferences.getDivergenceOrGenerate(): Int {
-        var currentDiv = getInt(PREFS_CURRENT_DIVERGENCE, UNDEFINED_DIVERGENCE)
-
-        if (currentDiv == UNDEFINED_DIVERGENCE) {
-            currentDiv = generateRandomDivergence()
-            saveDivergence(currentDiv)
-        }
-
-        return currentDiv
-    }
-
-    fun SharedPreferences.saveDivergence(currentDiv: Int = UNDEFINED_DIVERGENCE) {
-        edit {
-            if (currentDiv != UNDEFINED_DIVERGENCE)
-                putInt(PREFS_CURRENT_DIVERGENCE, currentDiv)
-        }
-    }
-
-    // Returns new attractor name or null if attractor hasn't been changed
+    /** Returns new attractor name or null if attractor hasn't been changed */
     fun checkAttractorChange(oldDiv: Int, newDiv: Int): String? {
         val attractor = getAttractor(oldDiv)
         return if (attractor != null && newDiv !in attractor)

@@ -3,7 +3,6 @@ package retanar.divergence
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -16,24 +15,19 @@ import androidx.preference.PreferenceManager
 import kotlinx.coroutines.launch
 import retanar.divergence.databinding.ActivityMainBinding
 import retanar.divergence.logic.ALL_RANGE
-import retanar.divergence.logic.DivergenceMeter.getDivergenceOrGenerate
 import retanar.divergence.logic.MILLION
-import retanar.divergence.logic.PREFS_CURRENT_DIVERGENCE
 import retanar.divergence.logic.UNDEFINED_DIVERGENCE
-import timber.log.Timber
+import retanar.divergence.util.DI
 import kotlin.math.round
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val prefs get() = DI.preferences
+    private val preferences get() = DI.preferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        if (BuildConfig.DEBUG)
-            Timber.plant(Timber.DebugTree())
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
 
@@ -42,16 +36,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupViews() = with(binding) {
-        setDivergenceText()
+        // If worker was never started, then getStatus() flow will start with nothing
+        workerStatus.text = getString(R.string.worker_status, "not started")
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                WidgetUpdateWorker.getStatus()
-                    .collect { workInfos ->
-                        if (workInfos.isEmpty()) return@collect
-                        val info = workInfos.first().state.name.lowercase()
-                        workerStatus.text = getString(R.string.worker_status, info)
-                    }
+                // Separate launches is a way to collect multiple flows in one repeatOnLifecycle
+                launch {
+                    WidgetUpdateWorker.getStatus()
+                        .collect { workInfos ->
+                            if (workInfos.isEmpty()) return@collect
+                            val info = workInfos.first().state.name.lowercase()
+                            workerStatus.text = getString(R.string.worker_status, info)
+                        }
+                }
+                launch {
+                    preferences.getDivergenceFlow()
+                        .collect { divergence ->
+                            setDivergenceText(divergence)
+                        }
+                }
             }
         }
     }
@@ -62,10 +66,9 @@ class MainActivity : AppCompatActivity() {
         startWorkerUpdates.setOnClickListener { WidgetUpdateWorker.enqueueWork() }
     }
 
-    private fun setDivergenceText() {
-        val div = prefs.getDivergenceOrGenerate()
+    private fun setDivergenceText(divergence: Int) {
         binding.currentDivergence.text =
-            getString(R.string.current_divergence, div / MILLION.toFloat())
+            getString(R.string.current_divergence, divergence / MILLION.toFloat())
     }
 
     private fun changeDivergence() {
@@ -113,22 +116,6 @@ class MainActivity : AppCompatActivity() {
             DivergenceWidget.updateWidgetsWithSpecificDivergence(applicationContext, divergence)
 
         return true
-    }
-
-    // Using field so it won't be garbage collected
-    private val onDivergenceChangeListener = OnSharedPreferenceChangeListener { _, key ->
-        if (key == PREFS_CURRENT_DIVERGENCE)
-            setDivergenceText()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        prefs.registerOnSharedPreferenceChangeListener(onDivergenceChangeListener)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        prefs.unregisterOnSharedPreferenceChangeListener(onDivergenceChangeListener)
     }
 
     //<editor-fold desc="Menu">

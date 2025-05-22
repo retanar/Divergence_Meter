@@ -14,13 +14,15 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/add_widget_guide" />
+            android:text="@string/add_widget_guide"
+            android:textAppearance="@style/OrdinaryTextAppearance" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:text="@string/resize_widget_guide" />
+            android:text="@string/resize_widget_guide"
+            android:textAppearance="@style/OrdinaryTextAppearance" />
 
         <View
             android:id="@+id/divider"
@@ -33,6 +35,7 @@
             android:id="@+id/workerStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textAppearance="@style/OrdinaryTextAppearance"
             tools:text="@string/worker_status" />
 
         <LinearLayout
@@ -43,8 +46,7 @@
                 android:id="@+id/stopWorkerUpdates"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/stop_updates"
-                android:textSize="16sp" />
+                android:text="@string/stop_updates" />
 
             <View
                 android:layout_width="0dp"
@@ -55,8 +57,7 @@
                 android:id="@+id/startWorkerUpdates"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/start_updates"
-                android:textSize="16sp" />
+                android:text="@string/start_updates" />
         </LinearLayout>
 
         <TextView
@@ -64,7 +65,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/current_divergence" />
+            android:text="@string/current_divergence"
+            android:textAppearance="@style/OrdinaryTextAppearance" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -87,8 +89,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:text="@string/change"
-                android:textSize="16sp" />
+                android:text="@string/change" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

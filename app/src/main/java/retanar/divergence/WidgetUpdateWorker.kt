@@ -5,9 +5,10 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import retanar.divergence.logic.SETTING_WIDGET_UPDATE_MINUTES
-import timber.log.Timber
-import java.util.concurrent.TimeUnit
+import retanar.divergence.util.DI
+import retanar.divergence.util.logd
+import kotlin.time.Duration
+import kotlin.time.toJavaDuration
 
 class WidgetUpdateWorker(
     context: Context,
@@ -15,7 +16,7 @@ class WidgetUpdateWorker(
 ) : Worker(context, workerParams) {
     override fun doWork(): Result {
         DivergenceWidget.updateWidgetsWithRandomDivergence(applicationContext)
-        Timber.d("Divergence updated with worker")
+        logd { "Divergence updated with worker" }
 
         return Result.success()
     }
@@ -25,19 +26,16 @@ class WidgetUpdateWorker(
         private val workManager get() = DI.workManager
 
         fun enqueueWork() {
-            val interval = DI.settings.getString(SETTING_WIDGET_UPDATE_MINUTES, null)
-                ?.toLongOrNull()
-                ?: 120
-            Timber.d("Worker asked to enqueue work at interval $interval")
+            val interval = DI.preferences.getWidgetUpdateInterval()
+            logd { "Worker asked to enqueue work at interval $interval" }
 
-            if (interval == 0L) {
+            if (interval == Duration.ZERO) {
                 stopWork()
                 return
             }
 
             val workRequest = PeriodicWorkRequestBuilder<WidgetUpdateWorker>(
-                repeatInterval = interval,
-                repeatIntervalTimeUnit = TimeUnit.MINUTES
+                repeatInterval = interval.toJavaDuration()
             ).build()
 
             workManager.enqueueUniquePeriodicWork(
@@ -49,7 +47,7 @@ class WidgetUpdateWorker(
 
         fun stopWork() {
             workManager.cancelUniqueWork(UPDATE_WORKER_NAME)
-            Timber.d("Worker stopped work")
+            logd { "Worker stopped work" }
         }
 
         fun getStatus() = workManager.getWorkInfosForUniqueWorkFlow(UPDATE_WORKER_NAME)
