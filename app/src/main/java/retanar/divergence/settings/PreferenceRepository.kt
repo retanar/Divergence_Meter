@@ -1,4 +1,4 @@
-package retanar.divergence.util
+package retanar.divergence.settings
 
 import android.content.Context
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
@@ -8,7 +8,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import retanar.divergence.logic.DivergenceMeter
-import retanar.divergence.logic.UNDEFINED_DIVERGENCE
+import retanar.divergence.util.UNDEFINED_DIVERGENCE
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes

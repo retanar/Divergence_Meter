@@ -63,10 +63,17 @@ object DivergenceMeter {
      * How it works:
      *  - equalize the divergence to range [0;1_000_000)
      *  - subtract half of the maximum divergence to put the divergence in range [-500_000;+500_000)
-     *  - divide by a specific number to create the coefficient */
-    fun getCoefficient(currentDiv: Int) =
-        (-getAttractor(currentDiv)!!.range.first + currentDiv - 500_000) /
-            -(MILLION / 2 / MAX_COEFFICIENT)
+     *  - scale it to fit under MAX_COEFFICIENT
+     *  - negate the result, as if pointing to the middle value */
+    fun getCoefficient(div: Int): Int {
+        val attractor = getAttractor(div) ?: return 0
+
+        val equalizedDiv = div - attractor.range.first - 500_000
+        val scaleConst = 500_000 / MAX_COEFFICIENT
+        val coefficient = -(equalizedDiv / scaleConst)
+
+        return coefficient
+    }
 
     fun getAttractor(div: Int): Attractor? = attractors.find { div in it }
 

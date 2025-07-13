@@ -2,6 +2,7 @@ package retanar.divergence.util
 
 import android.content.Context
 import androidx.work.WorkManager
+import retanar.divergence.settings.PreferenceRepository
 
 object DI {
     lateinit var preferences: PreferenceRepository

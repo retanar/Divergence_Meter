@@ -6,6 +6,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import retanar.divergence.util.DI
+import retanar.divergence.util.getWidgetIds
 import retanar.divergence.util.logd
 import kotlin.time.Duration
 import kotlin.time.toJavaDuration
@@ -15,6 +16,11 @@ class WidgetUpdateWorker(
     workerParams: WorkerParameters,
 ) : Worker(context, workerParams) {
     override fun doWork(): Result {
+        if (getWidgetIds(applicationContext).isEmpty()) {
+            stopWork()
+            return Result.failure()
+        }
+
         DivergenceWidget.updateWidgetsWithRandomDivergence(applicationContext)
         logd { "Divergence updated with worker" }
 

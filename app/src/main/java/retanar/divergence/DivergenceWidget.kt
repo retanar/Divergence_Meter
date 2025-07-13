@@ -6,12 +6,12 @@ import android.content.ComponentName
 import android.content.Context
 import android.widget.RemoteViews
 import retanar.divergence.logic.DivergenceMeter
-import retanar.divergence.logic.MILLION
-import retanar.divergence.logic.nixieNumberDrawables
-import retanar.divergence.logic.tubeIds
 import retanar.divergence.logic.worldlines
 import retanar.divergence.util.DI
 import retanar.divergence.util.NotificationUtils.sendNotification
+import retanar.divergence.util.nixieNumberDrawables
+import retanar.divergence.util.stringDivergence
+import retanar.divergence.util.tubeIds
 
 class DivergenceWidget : AppWidgetProvider() {
     override fun onEnabled(context: Context) {
@@ -138,7 +138,7 @@ class DivergenceWidget : AppWidgetProvider() {
                 if (preferences.getWorldlineNotificationsEnabled())
                     sendNotification(
                         context,
-                        "Worldline ${worldline.divergence / MILLION.toFloat()}",
+                        "Worldline ${worldline.divergence.stringDivergence()}",
                         worldline.message
                     )
             }

@@ -7,10 +7,11 @@ import android.content.Context.NOTIFICATION_SERVICE
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import retanar.divergence.R
-import retanar.divergence.logic.CHANGE_WORLDLINE_NOTIFICATION_CHANNEL
-import retanar.divergence.logic.NOTIFICATION_ID
 
 object NotificationUtils {
+    private const val CHANGE_WORLDLINE_NOTIFICATION_CHANNEL = "change_worldline_channel"
+    private const val NOTIFICATION_ID = 101
+
     fun sendNotification(context: Context, title: String, text: String) {
         logd { "sendNotification() call with text = \"$text\"" }
         val notifyManager = getNotificationManager(context)

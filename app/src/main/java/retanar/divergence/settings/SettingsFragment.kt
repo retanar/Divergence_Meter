@@ -1,4 +1,4 @@
-package retanar.divergence
+package retanar.divergence.settings
 
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.pm.PackageManager
@@ -18,12 +18,14 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
+import retanar.divergence.R
+import retanar.divergence.WidgetUpdateWorker
+import retanar.divergence.settings.PreferenceRepository.Companion.SETTING_ATTRACTOR_COOLDOWN_HOURS
+import retanar.divergence.settings.PreferenceRepository.Companion.SETTING_ATTRACTOR_NOTIFICATIONS
+import retanar.divergence.settings.PreferenceRepository.Companion.SETTING_WIDGET_UPDATE_MINUTES
+import retanar.divergence.settings.PreferenceRepository.Companion.SETTING_WORLDLINE_NOTIFICATIONS
 import retanar.divergence.util.DI
 import retanar.divergence.util.NotificationUtils
-import retanar.divergence.util.PreferenceRepository.Companion.SETTING_ATTRACTOR_COOLDOWN_HOURS
-import retanar.divergence.util.PreferenceRepository.Companion.SETTING_ATTRACTOR_NOTIFICATIONS
-import retanar.divergence.util.PreferenceRepository.Companion.SETTING_WIDGET_UPDATE_MINUTES
-import retanar.divergence.util.PreferenceRepository.Companion.SETTING_WORLDLINE_NOTIFICATIONS
 
 class SettingsFragment : PreferenceFragmentCompat() {
     private val preferences get() = DI.preferences

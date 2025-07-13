@@ -1,11 +1,10 @@
 package retanar.divergence
 
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -15,10 +14,11 @@ import androidx.preference.PreferenceManager
 import kotlinx.coroutines.launch
 import retanar.divergence.databinding.ActivityMainBinding
 import retanar.divergence.logic.ALL_RANGE
-import retanar.divergence.logic.MILLION
-import retanar.divergence.logic.UNDEFINED_DIVERGENCE
+import retanar.divergence.settings.SettingsActivity
 import retanar.divergence.util.DI
-import kotlin.math.round
+import retanar.divergence.util.getWidgetIds
+import retanar.divergence.util.intDivergence
+import retanar.divergence.util.stringDivergence
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -46,15 +46,17 @@ class MainActivity : AppCompatActivity() {
                     WidgetUpdateWorker.getStatus()
                         .collect { workInfos ->
                             if (workInfos.isEmpty()) return@collect
-                            val info = workInfos.first().state.name.lowercase()
-                            workerStatus.text = getString(R.string.worker_status, info)
+
+                            val isFinished = workInfos.first().state.isFinished
+                            workerStatus.text = getString(
+                                R.string.worker_status,
+                                if (isFinished) "not working" else "working"
+                            )
                         }
                 }
                 launch {
                     preferences.getDivergenceFlow()
-                        .collect { divergence ->
-                            setDivergenceText(divergence)
-                        }
+                        .collect(::setDivergenceText)
                 }
             }
         }
@@ -63,59 +65,61 @@ class MainActivity : AppCompatActivity() {
     private fun setupListeners() = with(binding) {
         changeDivergenceButton.setOnClickListener { changeDivergence() }
         stopWorkerUpdates.setOnClickListener { WidgetUpdateWorker.stopWork() }
-        startWorkerUpdates.setOnClickListener { WidgetUpdateWorker.enqueueWork() }
+        startWorkerUpdates.setOnClickListener {
+            if (getWidgetIds(applicationContext).isEmpty()) {
+                Toast.makeText(
+                    this@MainActivity,
+                    "There are no widgets, autoupdate shouldn't run",
+                    Toast.LENGTH_LONG
+                ).show()
+                return@setOnClickListener
+            }
+            WidgetUpdateWorker.enqueueWork()
+        }
+        showInstructions.setOnClickListener {
+            showInstructions.visibility = View.GONE
+            toAddWidget.visibility = View.VISIBLE
+            toResizeWidget.visibility = View.VISIBLE
+        }
     }
 
     private fun setDivergenceText(divergence: Int) {
         binding.currentDivergence.text =
-            getString(R.string.current_divergence, divergence / MILLION.toFloat())
+            getString(R.string.current_divergence, divergence.stringDivergence())
     }
 
     private fun changeDivergence() {
-        val userDiv = binding.userDivergence.text.toString()
-        if (userDiv.isBlank()) {
-            if (updateWidgets())
-                Toast.makeText(this, "Autoupdate!", Toast.LENGTH_SHORT).show()
+        if (getWidgetIds(applicationContext).isEmpty()) {
+            Toast.makeText(
+                this,
+                "There are no widgets, add one before changing the divergence",
+                Toast.LENGTH_LONG
+            ).show()
             return
         }
 
-        val userDivNumber = round(userDiv.toDouble() * MILLION).toInt()
+        val userDiv = binding.userDivergence.text.trim().toString()
+        if (userDiv.isEmpty()) {
+            DivergenceWidget.updateWidgetsWithRandomDivergence(applicationContext)
+            Toast.makeText(this, "Autoupdate!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val userDivNumber = userDiv.intDivergence()
         if (userDivNumber !in ALL_RANGE) {
             Toast.makeText(
                 this,
-                "Wrong value. Should be in (%.6f;%.6f)".format(
-                    ALL_RANGE.range.first / MILLION.toFloat(),
-                    (ALL_RANGE.range.last + 1) / MILLION.toFloat(),
+                "Wrong value. Should be in (%s;%s)".format(
+                    ALL_RANGE.range.first.stringDivergence(),
+                    (ALL_RANGE.range.last + 1).stringDivergence(),
                 ),
                 Toast.LENGTH_LONG
             ).show()
             return
         }
 
-        if (updateWidgets(userDivNumber))
-            Toast.makeText(this, "Updated!", Toast.LENGTH_SHORT).show()
-    }
-
-    /** @return `false` if there are no widgets, `true` otherwise */
-    private fun updateWidgets(divergence: Int = UNDEFINED_DIVERGENCE): Boolean {
-        val ids = AppWidgetManager.getInstance(application).getAppWidgetIds(
-            ComponentName(application, DivergenceWidget::class.java)
-        )
-        if (ids.isEmpty()) {
-            Toast.makeText(
-                this,
-                "There are no widgets, please add one before changing the divergence",
-                Toast.LENGTH_LONG
-            ).show()
-            return false
-        }
-
-        if (divergence == UNDEFINED_DIVERGENCE)
-            DivergenceWidget.updateWidgetsWithRandomDivergence(applicationContext)
-        else
-            DivergenceWidget.updateWidgetsWithSpecificDivergence(applicationContext, divergence)
-
-        return true
+        DivergenceWidget.updateWidgetsWithSpecificDivergence(applicationContext, userDivNumber)
+        Toast.makeText(this, "Updated!", Toast.LENGTH_SHORT).show()
     }
 
     //<editor-fold desc="Menu">

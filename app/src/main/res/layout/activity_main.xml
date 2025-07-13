@@ -12,20 +12,32 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/showInstructions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/add_widget_guide"
+            android:text="@string/click_to_show_instructions"
             android:textAppearance="@style/OrdinaryTextAppearance" />
 
         <TextView
+            android:id="@+id/toAddWidget"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/add_widget_guide"
+            android:textAppearance="@style/OrdinaryTextAppearance"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/toResizeWidget"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:text="@string/resize_widget_guide"
-            android:textAppearance="@style/OrdinaryTextAppearance" />
+            android:textAppearance="@style/OrdinaryTextAppearance"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <View
-            android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_margin="8dp"

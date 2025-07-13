@@ -1,9 +1,6 @@
-package retanar.divergence.logic
+package retanar.divergence.util
 
 import retanar.divergence.R
-
-const val CHANGE_WORLDLINE_NOTIFICATION_CHANNEL = "change_worldline_channel"
-const val NOTIFICATION_ID = 101
 
 const val MILLION = 1_000_000
 const val UNDEFINED_DIVERGENCE = Int.MIN_VALUE

@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">Divergence meter</string>
     <string name="default_divergence">1.048596</string>
-    <string name="current_divergence">Current divergence: %.6f</string>
-    <string name="next_divergence">Next divergence: %.6f</string>
+    <string name="current_divergence">Current divergence: %s</string>
     <string name="hint_enter_new_divergence_here">Enter new divergence here</string>
     <string name="change">Change</string>
+    <string name="click_to_show_instructions">Click here to show instructions</string>
     <string name="add_widget_guide">To add the widget:
         \n- On a Home screen, hold an empty space. Tap Widgets section.
         \n- Find a Divergence widget. Hold it and move wherever you want.
@@ -13,7 +13,7 @@
         You\'ll see the dots around it that you can move.
     </string>
     <string name="menu_settings">Settings</string>
-    <string name="worker_status">Background update status: %s</string>
+    <string name="worker_status">Widget updater status: %s</string>
     <string name="stop_updates">Stop updates</string>
     <string name="start_updates">Restart updates</string>
 </resources>
