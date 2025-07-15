@@ -4,6 +4,9 @@ import retanar.divergence.util.MILLION
 
 class Attractor(val name: String, val range: IntRange) {
     operator fun contains(value: Int) = value in range
+
+    // TODO: Maybe temporary
+    operator fun contains(value: Divergence) = contains(value.intValue)
 }
 
 // Inclusive -1000000 is needed for getCoefficient()

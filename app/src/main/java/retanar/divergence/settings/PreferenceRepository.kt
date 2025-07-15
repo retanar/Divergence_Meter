@@ -7,6 +7,7 @@ import androidx.preference.PreferenceManager
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import retanar.divergence.logic.Divergence
 import retanar.divergence.logic.DivergenceMeter
 import retanar.divergence.util.UNDEFINED_DIVERGENCE
 import kotlin.time.Duration
@@ -20,18 +21,18 @@ class PreferenceRepository(context: Context) {
     private val settingPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     /** Get stored divergence, or create random and save it. */
-    fun getDivergenceOrCreate(): Int {
+    fun getDivergenceOrCreate(): Divergence {
         var currentDiv = normalPreferences.getInt(PREFS_CURRENT_DIVERGENCE, UNDEFINED_DIVERGENCE)
 
         if (currentDiv == UNDEFINED_DIVERGENCE) {
-            currentDiv = DivergenceMeter.generateRandomDivergence()
-            setDivergence(currentDiv)
+            currentDiv = DivergenceMeter.generateRandomDivergence().intValue
+            setDivergence(Divergence(currentDiv))
         }
 
-        return currentDiv
+        return Divergence(currentDiv)
     }
 
-    fun getDivergenceFlow(): Flow<Int> = callbackFlow {
+    fun getDivergenceFlow(): Flow<Divergence> = callbackFlow {
         send(getDivergenceOrCreate())
 
         val listener = OnSharedPreferenceChangeListener { _, key ->
@@ -43,8 +44,8 @@ class PreferenceRepository(context: Context) {
         awaitClose { normalPreferences.unregisterOnSharedPreferenceChangeListener(listener) }
     }
 
-    fun setDivergence(divergence: Int) = normalPreferences.edit {
-        putInt(PREFS_CURRENT_DIVERGENCE, divergence)
+    fun setDivergence(divergence: Divergence) = normalPreferences.edit {
+        putInt(PREFS_CURRENT_DIVERGENCE, divergence.intValue)
     }
 
     fun getLastAttractorChangeTime(): Long = normalPreferences.getLong(

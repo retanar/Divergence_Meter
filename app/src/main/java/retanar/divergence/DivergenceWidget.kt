@@ -5,12 +5,12 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.widget.RemoteViews
+import retanar.divergence.logic.Divergence
 import retanar.divergence.logic.DivergenceMeter
 import retanar.divergence.logic.worldlines
 import retanar.divergence.util.DI
 import retanar.divergence.util.NotificationUtils.sendNotification
 import retanar.divergence.util.nixieNumberDrawables
-import retanar.divergence.util.stringDivergence
 import retanar.divergence.util.tubeIds
 
 class DivergenceWidget : AppWidgetProvider() {
@@ -70,8 +70,8 @@ class DivergenceWidget : AppWidgetProvider() {
          * Main usage: manual update. */
         fun updateWidgetsWithSpecificDivergence(
             context: Context,
-            divergence: Int,
-            oldDivergence: Int = preferences.getDivergenceOrCreate(),
+            divergence: Divergence,
+            oldDivergence: Divergence = preferences.getDivergenceOrCreate(),
         ) {
             // Would be bad to resend notifications for the same thing or during init
             if (divergence != oldDivergence) {
@@ -82,7 +82,7 @@ class DivergenceWidget : AppWidgetProvider() {
                 )
             }
 
-            val divDigits = DivergenceMeter.splitIntegerToDigits(divergence)
+            val divDigits = DivergenceMeter.splitIntegerToDigits(divergence.intValue)
 
             // Firstly, show divergence on the widgets
             AppWidgetManager.getInstance(context).updateAppWidget(
@@ -96,7 +96,7 @@ class DivergenceWidget : AppWidgetProvider() {
 
         private fun createRemoteViews(
             packageName: String,
-            divergenceDigits: IntArray
+            divergenceDigits: IntArray,
         ): RemoteViews {
             val views = RemoteViews(packageName, R.layout.divergence_widget)
             views.setImageViewResource(R.id.tubeDot, R.drawable.nixie_dot)
@@ -117,8 +117,8 @@ class DivergenceWidget : AppWidgetProvider() {
 
         private fun onDivergenceChangeNotification(
             context: Context,
-            newDivergence: Int,
-            oldDivergence: Int
+            newDivergence: Divergence,
+            oldDivergence: Divergence,
         ) {
             DivergenceMeter.checkAttractorChange(oldDivergence, newDivergence)
                 ?.let { attractorName ->
@@ -138,7 +138,7 @@ class DivergenceWidget : AppWidgetProvider() {
                 if (preferences.getWorldlineNotificationsEnabled())
                     sendNotification(
                         context,
-                        "Worldline ${worldline.divergence.stringDivergence()}",
+                        "Worldline ${worldline.divergence.asString}",
                         worldline.message
                     )
             }

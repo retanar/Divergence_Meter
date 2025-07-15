@@ -14,11 +14,10 @@ import androidx.preference.PreferenceManager
 import kotlinx.coroutines.launch
 import retanar.divergence.databinding.ActivityMainBinding
 import retanar.divergence.logic.ALL_RANGE
+import retanar.divergence.logic.Divergence
 import retanar.divergence.settings.SettingsActivity
 import retanar.divergence.util.DI
 import retanar.divergence.util.getWidgetIds
-import retanar.divergence.util.intDivergence
-import retanar.divergence.util.stringDivergence
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -83,9 +82,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setDivergenceText(divergence: Int) {
+    private fun setDivergenceText(divergence: Divergence) {
         binding.currentDivergence.text =
-            getString(R.string.current_divergence, divergence.stringDivergence())
+            getString(R.string.current_divergence, divergence.asString)
     }
 
     private fun changeDivergence() {
@@ -105,13 +104,13 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        val userDivNumber = userDiv.intDivergence()
+        val userDivNumber = Divergence.fromString(userDiv)
         if (userDivNumber !in ALL_RANGE) {
             Toast.makeText(
                 this,
                 "Wrong value. Should be in (%s;%s)".format(
-                    ALL_RANGE.range.first.stringDivergence(),
-                    (ALL_RANGE.range.last + 1).stringDivergence(),
+                    Divergence(ALL_RANGE.range.first).asString,
+                    Divergence(ALL_RANGE.range.last + 1).asString,
                 ),
                 Toast.LENGTH_LONG
             ).show()
