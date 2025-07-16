@@ -109,8 +109,8 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(
                 this,
                 "Wrong value. Should be in (%s;%s)".format(
-                    Divergence(ALL_RANGE.range.first).asString,
-                    Divergence(ALL_RANGE.range.last + 1).asString,
+                    ALL_RANGE.start.asString,
+                    ALL_RANGE.endExclusive.asString,
                 ),
                 Toast.LENGTH_LONG
             ).show()

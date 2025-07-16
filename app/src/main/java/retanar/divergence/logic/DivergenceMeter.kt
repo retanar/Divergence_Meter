@@ -4,14 +4,20 @@ import retanar.divergence.util.logd
 import retanar.divergence.util.loge
 import kotlin.math.absoluteValue
 import kotlin.random.Random
-import kotlin.random.nextInt
 
 @Suppress("MemberVisibilityCanBePrivate")
 object DivergenceMeter {
     private const val DIVERGENCE_CHANGE_STEP = 100_000
     private const val MAX_COEFFICIENT = DIVERGENCE_CHANGE_STEP / 4
 
-    fun generateRandomDivergence() = Divergence(Random.nextInt(ALL_RANGE.range))
+    fun generateRandomDivergence(): Divergence {
+        return Divergence(
+            Random.nextInt(
+                ALL_RANGE.start.intValue,
+                ALL_RANGE.endExclusive.intValue
+            )
+        )
+    }
 
     fun generateBalancedDivergenceWithCooldown(
         currentDiv: Divergence,
@@ -24,14 +30,17 @@ object DivergenceMeter {
         return if (lastTimeChanged < cooldownTime)
             generateBalancedDivergence(currentDiv, ALL_RANGE)
         else
-            generateBalancedDivergence(currentDiv, getAttractor(currentDiv) ?: ALL_RANGE)
+            generateBalancedDivergence(
+                currentDiv,
+                Attractor.findFor(currentDiv)?.range ?: ALL_RANGE
+            )
     }
 
     fun generateBalancedDivergence(
         currentDiv: Divergence,
-        attractor: Attractor = ALL_RANGE
+        divRange: DivergenceRange = ALL_RANGE
     ): Divergence {
-        if (currentDiv !in attractor) {
+        if (currentDiv !in divRange) {
             val randomDiv = generateRandomDivergence()
             loge {
                 "Error in generateBalancedDivergence(): currentDiv was not in Attractor's range. " +
@@ -42,7 +51,7 @@ object DivergenceMeter {
 
         // It is ensured with the previous check that getCoefficient will work
         val coefficient = getCoefficient(currentDiv)
-        var newDivInt: Int
+        var newDiv: Divergence
         var step: Int
 
         do {
@@ -50,10 +59,8 @@ object DivergenceMeter {
                 -DIVERGENCE_CHANGE_STEP + coefficient,
                 DIVERGENCE_CHANGE_STEP + coefficient
             )
-            newDivInt = currentDiv.intValue + step
-        } while (newDivInt !in attractor)
-
-        val newDiv = Divergence(newDivInt)
+            newDiv = Divergence(currentDiv.intValue + step)
+        } while (newDiv !in divRange)
 
         logd {
             """generateBalancedDivergence() call.
@@ -72,22 +79,20 @@ object DivergenceMeter {
      *  - scale it to fit under MAX_COEFFICIENT
      *  - negate the result, as if pointing to the middle value */
     fun getCoefficient(div: Divergence): Int {
-        val attractor = getAttractor(div) ?: return 0
+        val attractor = Attractor.findFor(div) ?: return 0
 
-        val equalizedDiv = div.intValue - attractor.range.first - 500_000
+        val equalizedDiv = div.intValue - attractor.range.start.intValue - 500_000
         val scaleConst = 500_000 / MAX_COEFFICIENT
         val coefficient = -(equalizedDiv / scaleConst)
 
         return coefficient
     }
 
-    fun getAttractor(div: Divergence): Attractor? = attractors.find { div in it }
-
     /** Returns new attractor name or null if attractor hasn't been changed */
     fun checkAttractorChange(oldDiv: Divergence, newDiv: Divergence): String? {
-        val attractor = getAttractor(oldDiv)
+        val attractor = Attractor.findFor(oldDiv)
         return if (attractor != null && newDiv !in attractor)
-            getAttractor(newDiv)?.name
+            Attractor.findFor(newDiv)?.title
         else null
     }
 

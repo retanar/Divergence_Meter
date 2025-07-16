@@ -3,10 +3,9 @@ package retanar.divergence
 import org.junit.Assert
 import org.junit.Test
 import retanar.divergence.logic.ALL_RANGE
-import retanar.divergence.logic.ALPHA_ATTRACTOR
+import retanar.divergence.logic.Attractor
 import retanar.divergence.logic.Divergence
 import retanar.divergence.logic.DivergenceMeter
-import retanar.divergence.logic.attractors
 import retanar.divergence.util.MILLION
 import java.util.Date
 
@@ -16,7 +15,7 @@ class ExampleUnitTest {
     @Test
     fun zeroCooldownTest() {
         val divergence = Divergence(999_999)
-        val attractor = DivergenceMeter.getAttractor(divergence)!!
+        val attractor = Attractor.findFor(divergence)!!
         val lastTimeChanged = Date().time - 1000        // One second ago
         val cooldownMs = 0L
 
@@ -37,13 +36,13 @@ class ExampleUnitTest {
 
     @Test
     fun oldDivergenceOutOfAllRange() {
-        val oldDiv = Divergence(ALL_RANGE.range.last + MILLION / 2)
-        val newDiv1 = Divergence(ALL_RANGE.range.last - MILLION / 2)
-        val newDiv2 = Divergence(ALL_RANGE.range.last + MILLION / 2)
+        val oldDiv = Divergence(ALL_RANGE.endExclusive.intValue + MILLION / 2)
+        val newDiv1 = Divergence(ALL_RANGE.endExclusive.intValue - MILLION / 2)
+        val newDiv2 = Divergence(ALL_RANGE.endExclusive.intValue + MILLION / 2)
 
         Assert.assertNull(
             "Expected null when the divergence is out of range",
-            DivergenceMeter.getAttractor(oldDiv)
+            Attractor.findFor(oldDiv)
         )
         Assert.assertNull(
             "Expected null when old divergence is out of range",
@@ -64,9 +63,9 @@ class ExampleUnitTest {
         // 0 should give max coefficient = 25000
         // 999999 should give almost lowest coefficient = -24999.95, rounded down = -24999
         // exact middle should give no coefficient
-        attractors.forEach {
-            val firstDiv = Divergence(it.range.first)
-            val lastDiv = Divergence(it.range.last)
+        Attractor.entries.forEach {
+            val firstDiv = it.range.start
+            val lastDiv = it.range.endExclusive
             val middleDiv = Divergence(firstDiv.intValue + 500_000)
             Assert.assertEquals(25_000, DivergenceMeter.getCoefficient(firstDiv))
             Assert.assertEquals(-24_999, DivergenceMeter.getCoefficient(lastDiv))
@@ -76,9 +75,7 @@ class ExampleUnitTest {
 
     @Test
     fun divergenceTransformations() {
-        val range = ALPHA_ATTRACTOR
-
-        for (i in range.range) {
+        for (i in 0..<1_000_000) {
             val div = Divergence(i)
             val manual = "0.%06d".format(i)
             val actual = div.asString
