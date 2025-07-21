@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import retanar.divergence.logic.Divergence
 import retanar.divergence.logic.DivergenceMeter
-import retanar.divergence.util.UNDEFINED_DIVERGENCE
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -22,9 +21,9 @@ class PreferenceRepository(context: Context) {
 
     /** Get stored divergence, or create random and save it. */
     fun getDivergenceOrCreate(): Divergence {
-        var currentDiv = normalPreferences.getInt(PREFS_CURRENT_DIVERGENCE, UNDEFINED_DIVERGENCE)
+        var currentDiv = normalPreferences.getInt(PREFS_CURRENT_DIVERGENCE, Divergence.UNDEFINED)
 
-        if (currentDiv == UNDEFINED_DIVERGENCE) {
+        if (currentDiv == Divergence.UNDEFINED) {
             currentDiv = DivergenceMeter.generateRandomDivergence().intValue
             setDivergence(Divergence(currentDiv))
         }

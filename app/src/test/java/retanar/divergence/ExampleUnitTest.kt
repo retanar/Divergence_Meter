@@ -6,7 +6,6 @@ import retanar.divergence.logic.ALL_RANGE
 import retanar.divergence.logic.Attractor
 import retanar.divergence.logic.Divergence
 import retanar.divergence.logic.DivergenceMeter
-import retanar.divergence.util.MILLION
 import java.util.Date
 
 class ExampleUnitTest {
@@ -36,21 +35,20 @@ class ExampleUnitTest {
 
     @Test
     fun oldDivergenceOutOfAllRange() {
-        val oldDiv = Divergence(ALL_RANGE.endExclusive.intValue + MILLION / 2)
-        val newDiv1 = Divergence(ALL_RANGE.endExclusive.intValue - MILLION / 2)
-        val newDiv2 = Divergence(ALL_RANGE.endExclusive.intValue + MILLION / 2)
+        val outOfRangeDiv = Divergence(ALL_RANGE.endExclusive.intValue)
+        val inRangeDiv = Divergence(ALL_RANGE.endExclusive.intValue - 10)
 
         Assert.assertNull(
             "Expected null when the divergence is out of range",
-            Attractor.findFor(oldDiv)
+            Attractor.findFor(outOfRangeDiv)
         )
         Assert.assertNull(
             "Expected null when old divergence is out of range",
-            DivergenceMeter.checkAttractorChange(oldDiv, newDiv1)
+            DivergenceMeter.checkAttractorChange(outOfRangeDiv, inRangeDiv)
         )
         Assert.assertNull(
             "Expected null when new divergence is out of range",
-            DivergenceMeter.checkAttractorChange(oldDiv, newDiv2)
+            DivergenceMeter.checkAttractorChange(inRangeDiv, outOfRangeDiv)
         )
     }
 
@@ -65,7 +63,7 @@ class ExampleUnitTest {
         // exact middle should give no coefficient
         Attractor.entries.forEach {
             val firstDiv = it.range.start
-            val lastDiv = it.range.endExclusive
+            val lastDiv = Divergence(it.range.endExclusive.intValue - 1)
             val middleDiv = Divergence(firstDiv.intValue + 500_000)
             Assert.assertEquals(25_000, DivergenceMeter.getCoefficient(firstDiv))
             Assert.assertEquals(-24_999, DivergenceMeter.getCoefficient(lastDiv))
