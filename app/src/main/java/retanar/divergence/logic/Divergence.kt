@@ -14,7 +14,7 @@ value class Divergence(val intValue: Int) : Comparable<Divergence> {
     override fun compareTo(other: Divergence) = intValue.compareTo(other.intValue)
 
     companion object {
-        const val UNDEFINED = Int.MIN_VALUE
+        val UNDEFINED = Divergence(Int.MIN_VALUE)
 
         /** Used to convert between int and float representations */
         private const val CONVERSION = 1_000_000f

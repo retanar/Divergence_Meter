@@ -21,14 +21,19 @@ class PreferenceRepository(context: Context) {
 
     /** Get stored divergence, or create random and save it. */
     fun getDivergenceOrCreate(): Divergence {
-        var currentDiv = normalPreferences.getInt(PREFS_CURRENT_DIVERGENCE, Divergence.UNDEFINED)
+        var currentDiv = Divergence(
+            normalPreferences.getInt(
+                PREFS_CURRENT_DIVERGENCE,
+                Divergence.UNDEFINED.intValue
+            )
+        )
 
         if (currentDiv == Divergence.UNDEFINED) {
-            currentDiv = DivergenceMeter.generateRandomDivergence().intValue
-            setDivergence(Divergence(currentDiv))
+            currentDiv = DivergenceMeter.generateRandomDivergence()
+            setDivergence(currentDiv)
         }
 
-        return Divergence(currentDiv)
+        return currentDiv
     }
 
     fun getDivergenceFlow(): Flow<Divergence> = callbackFlow {
