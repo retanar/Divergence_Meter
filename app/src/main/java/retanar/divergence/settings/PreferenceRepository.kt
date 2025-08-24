@@ -108,6 +108,9 @@ class PreferenceRepository(context: Context) {
         const val SETTING_ATTRACTOR_COOLDOWN_HOURS = "attractor_change_cooldown"
         const val SETTING_WIDGET_UPDATE_MINUTES = "widget_autoupdate_delay"
 
+        /** Not a setting that stores any meaningful value, acts only as an id for a panel */
+        const val SETTING_CHECK_FOR_UPDATES_MANUAL = "check_for_updates_manual"
+
         private const val DEFAULT_ATTRACTOR_CHANGE_TIME_MS = 0L
         private const val DEFAULT_ATTRACTOR_NOTIFICATIONS_ENABLED = false
         private const val DEFAULT_WORLDLINE_NOTIFICATIONS_ENABLED = false

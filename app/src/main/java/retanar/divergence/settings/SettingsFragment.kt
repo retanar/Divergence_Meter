@@ -1,7 +1,9 @@
 package retanar.divergence.settings
 
 import android.Manifest.permission.POST_NOTIFICATIONS
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.InputFilter
@@ -14,14 +16,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.preference.EditTextPreference
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
+import retanar.divergence.BuildConfig
 import retanar.divergence.R
 import retanar.divergence.WidgetUpdateWorker
 import retanar.divergence.settings.PreferenceRepository.Companion.SETTING_ATTRACTOR_COOLDOWN_HOURS
 import retanar.divergence.settings.PreferenceRepository.Companion.SETTING_ATTRACTOR_NOTIFICATIONS
+import retanar.divergence.settings.PreferenceRepository.Companion.SETTING_CHECK_FOR_UPDATES_MANUAL
 import retanar.divergence.settings.PreferenceRepository.Companion.SETTING_WIDGET_UPDATE_MINUTES
 import retanar.divergence.settings.PreferenceRepository.Companion.SETTING_WORLDLINE_NOTIFICATIONS
 import retanar.divergence.util.DI
@@ -75,6 +80,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
             setOnPreferenceChangeListener { _, newValue ->
                 if (newValue == true) askNotificationPermission()
                 true
+            }
+        }
+
+        findPreference<Preference>(SETTING_CHECK_FOR_UPDATES_MANUAL)?.run {
+            summary = "Current version: ${BuildConfig.VERSION_NAME}"
+            intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse("https://github.com/retanar/Divergence_Meter/releases")
             }
         }
     }

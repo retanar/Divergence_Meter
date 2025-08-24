@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Settings' names and default values should be synchronized with PreferenceRepository.kt -->
     <SwitchPreference
@@ -29,4 +30,9 @@
         android:summary="Approximate period in minutes (minimum - 15, 0 - no autoupdate)"
         android:title="Interval between widget updates"
         app:iconSpaceReserved="false" />
+    <Preference
+        android:key="check_for_updates_manual"
+        android:title="Check GitHub for updates"
+        app:iconSpaceReserved="false"
+        tools:summary="Current version: 2025.08" />
 </PreferenceScreen>
