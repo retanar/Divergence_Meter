@@ -1,27 +1,20 @@
 package retanar.divergence.logic
 
-import retanar.divergence.util.MILLION
+enum class Attractor(val title: String, val range: DivergenceRange) {
+    // Inclusive -1_000_000 is needed for getCoefficient()
+    OMEGA("Omega", Divergence(-1_000_000)..<Divergence(0)),
 
-class Attractor(val name: String, val range: IntRange) {
-    operator fun contains(value: Int) = value in range
+    ALPHA("Alpha", Divergence(0)..<Divergence(1_000_000)),
+    BETA("Beta", Divergence(1_000_000)..<Divergence(2_000_000)),
+    GAMMA("Gamma", Divergence(2_000_000)..<Divergence(3_000_000)),
+    DELTA("Delta", Divergence(3_000_000)..<Divergence(4_000_000)),
+    EPSILON("Epsilon", Divergence(4_000_000)..<Divergence(5_000_000));
+
+    operator fun contains(value: Divergence) = value in range
+
+    companion object {
+        fun findFor(div: Divergence): Attractor? = Attractor.entries.find { div in it }
+    }
 }
 
-// Inclusive -1000000 is needed for getCoefficient()
-val OMEGA_ATTRACTOR = Attractor("Omega", -MILLION until 0)
-
-val ALPHA_ATTRACTOR = Attractor("Alpha", 0 until MILLION)
-val BETA_ATTRACTOR = Attractor("Beta", MILLION until 2 * MILLION)
-val GAMMA_ATTRACTOR = Attractor("Gamma", 2 * MILLION until 3 * MILLION)
-val DELTA_ATTRACTOR = Attractor("Delta", 3 * MILLION until 4 * MILLION)
-val EPSILON_ATTRACTOR = Attractor("Epsilon", 4 * MILLION until 5 * MILLION)
-
-val attractors = arrayOf(
-    OMEGA_ATTRACTOR,
-    ALPHA_ATTRACTOR,
-    BETA_ATTRACTOR,
-    GAMMA_ATTRACTOR,
-    DELTA_ATTRACTOR,
-    EPSILON_ATTRACTOR,
-)
-
-val ALL_RANGE = Attractor("All", attractors.first().range.first..attractors.last().range.last)
+val ALL_RANGE = Attractor.entries.first().range.start..<Attractor.entries.last().range.endExclusive

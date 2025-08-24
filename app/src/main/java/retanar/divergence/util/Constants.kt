@@ -2,9 +2,6 @@ package retanar.divergence.util
 
 import retanar.divergence.R
 
-const val MILLION = 1_000_000
-const val UNDEFINED_DIVERGENCE = Int.MIN_VALUE
-
 val nixieNumberDrawables = arrayOf(
     R.drawable.nixie0,
     R.drawable.nixie1,
