@@ -15,6 +15,10 @@ object NotificationUtils {
     fun sendNotification(context: Context, title: String, text: String) {
         logd { "sendNotification() call with text = \"$text\"" }
         val notifyManager = getNotificationManager(context)
+
+        // What if user already has notifications and permissions enabled. Not a great fix.
+        createNotificationChannelIfNone(context)
+
         val builder = NotificationCompat.Builder(context, CHANGE_WORLDLINE_NOTIFICATION_CHANNEL)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(title)
@@ -23,9 +27,12 @@ object NotificationUtils {
         notifyManager.notify(NOTIFICATION_ID, builder.build())
     }
 
-    fun createNotificationChannel(context: Context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notifyManager = getNotificationManager(context)
+    fun createNotificationChannelIfNone(context: Context) {
+        val notifyManager = getNotificationManager(context)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            notifyManager.getNotificationChannel(CHANGE_WORLDLINE_NOTIFICATION_CHANNEL) == null
+        ) {
+            logd { "Created notification channel" }
             val channel = NotificationChannel(
                 CHANGE_WORLDLINE_NOTIFICATION_CHANNEL,
                 "Change worldline notifications",

@@ -44,7 +44,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             Toast.makeText(context, "Notification permission not allowed", Toast.LENGTH_SHORT)
                 .show()
         } else {
-            NotificationUtils.createNotificationChannel(requireContext())
+            NotificationUtils.createNotificationChannelIfNone(requireContext())
         }
     }
 
@@ -99,6 +99,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             notificationPermissionLauncher.launch(POST_NOTIFICATIONS)
+        } else {
+            NotificationUtils.createNotificationChannelIfNone(requireContext())
         }
     }
 
