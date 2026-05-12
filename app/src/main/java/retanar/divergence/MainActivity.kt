@@ -80,6 +80,10 @@ class MainActivity : AppCompatActivity() {
             toAddWidget.visibility = View.VISIBLE
             toResizeWidget.visibility = View.VISIBLE
         }
+        showFullscreen.setOnClickListener {
+            val intent = Intent(this@MainActivity, FullscreenMeterActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun setDivergenceText(divergence: Divergence) {
