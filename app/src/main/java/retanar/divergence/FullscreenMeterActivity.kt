@@ -1,6 +1,8 @@
 package retanar.divergence
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.MotionEvent
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -37,6 +39,7 @@ class FullscreenMeterActivity : AppCompatActivity() {
 
         hideBars()
         setupViews()
+        setupListeners()
     }
 
     private fun setupViews() {
@@ -59,6 +62,28 @@ class FullscreenMeterActivity : AppCompatActivity() {
         }
         setTube(tubes.size - 2, tubeImages.indexOf(R.drawable.nixie_dot))
         setTube(tubes.size - 1, digits.last())
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setupListeners() = with(binding) {
+        // Use math for updating tubes, instead of spamming clickable views.
+        root.setOnTouchListener { _, event ->
+            if (event.action != MotionEvent.ACTION_DOWN)
+                return@setOnTouchListener false
+
+            val zoneFraction = 0.4f
+            val topZoneEnd = root.height * zoneFraction
+            val bottomZoneStart = root.height - topZoneEnd
+            val clickedTube = tubes.size - 1 - (event.x / tube0.width).toInt()
+
+            if (event.y < topZoneEnd) {
+                setTube(clickedTube, (tubeStates[clickedTube] + 1).mod(tubeImages.size))
+                true
+            } else if (event.y > bottomZoneStart) {
+                setTube(clickedTube, (tubeStates[clickedTube] - 1).mod(tubeImages.size))
+                true
+            } else false
+        }
     }
 
     private fun setTube(index: Int, state: Int) {
