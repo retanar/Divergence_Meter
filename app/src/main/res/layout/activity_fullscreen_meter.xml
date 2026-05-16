@@ -3,74 +3,77 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
     android:background="@android:color/black"
-    android:gravity="center_horizontal"
-    android:paddingHorizontal="2dp"
+    android:baselineAligned="false"
+    android:gravity="center"
+    android:orientation="horizontal"
+    tools:context=".FullscreenMeterActivity"
     tools:ignore="ContentDescription">
+
+    <ImageView
+        android:id="@+id/tube7"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        tools:srcCompat="@drawable/nixie7" />
 
     <ImageView
         android:id="@+id/tube6"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:adjustViewBounds="true"
-        tools:srcCompat="@drawable/nixie_minus" />
-
-    <ImageView
-        android:id="@+id/tubeDot"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:adjustViewBounds="true"
-        tools:srcCompat="@drawable/nixie_dot" />
+        tools:srcCompat="@drawable/nixie6" />
 
     <ImageView
         android:id="@+id/tube5"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:adjustViewBounds="true"
-        tools:srcCompat="@drawable/nixie0" />
+        tools:srcCompat="@drawable/nixie5" />
 
     <ImageView
         android:id="@+id/tube4"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:adjustViewBounds="true"
-        tools:srcCompat="@drawable/nixie1" />
-
-    <ImageView
-        android:id="@+id/tube3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:adjustViewBounds="true"
-        tools:srcCompat="@drawable/nixie2" />
-
-    <ImageView
-        android:id="@+id/tube2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:adjustViewBounds="true"
-        tools:srcCompat="@drawable/nixie3" />
-
-    <ImageView
-        android:id="@+id/tube1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:adjustViewBounds="true"
         tools:srcCompat="@drawable/nixie4" />
 
     <ImageView
-        android:id="@+id/tube0"
+        android:id="@+id/tube3"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:adjustViewBounds="true"
-        tools:srcCompat="@drawable/nixie5" />
+        tools:srcCompat="@drawable/nixie3" />
+
+    <ImageView
+        android:id="@+id/tube2"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        tools:srcCompat="@drawable/nixie2" />
+
+    <ImageView
+        android:id="@+id/tube1"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        tools:srcCompat="@drawable/nixie1" />
+
+    <ImageView
+        android:id="@+id/tube0"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        tools:srcCompat="@drawable/nixie0" />
 
 </LinearLayout>
