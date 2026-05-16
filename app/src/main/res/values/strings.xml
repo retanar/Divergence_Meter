@@ -6,8 +6,8 @@
     <string name="change">Change</string>
     <string name="click_to_show_instructions">Click here to show instructions</string>
     <string name="add_widget_guide">To add the widget:
-        \n- On a Home screen, hold an empty space. Tap Widgets section.
-        \n- Find a Divergence widget. Hold it and move wherever you want.
+        \n- On the Home screen, hold an empty space. Tap Widgets section.
+        \n- Find the Divergence widget. Hold it and move wherever you want.
     </string>
     <string name="resize_widget_guide">To resize the widget, hold it and release.
         You\'ll see the dots around it that you can move.
@@ -16,4 +16,8 @@
     <string name="worker_status">Widget updater status: %s</string>
     <string name="stop_updates">Stop updates</string>
     <string name="start_updates">Restart updates</string>
+    <string name="fullscreen_meter">Fullscreen Meter</string>
+    <string name="fullscreen_meter_description">Fullscreen Divergence meter. Tap around the top or
+        the bottom of the tubes to switch states. Doesn\'t change the widget divergence.
+    </string>
 </resources>

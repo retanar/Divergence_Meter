@@ -57,22 +57,23 @@ class FullscreenMeterActivity : AppCompatActivity() {
         // Put current divergence as a start value
         val div = DI.preferences.getDivergenceOrCreate()
         val digits = DivergenceMeter.splitIntegerToDigits(div.intValue)
-        for (i in 0..<(tubes.size - 2)) {
+        for (i in 0..(tubes.size - 3)) {
             setTube(i, digits[i])
         }
         setTube(tubes.size - 2, tubeImages.indexOf(R.drawable.nixie_dot))
         setTube(tubes.size - 1, digits.last())
     }
 
+    // Suppress because I don't understand what it wants
     @SuppressLint("ClickableViewAccessibility")
     private fun setupListeners() = with(binding) {
-        // Use math for updating tubes, instead of spamming clickable views.
+        // Use touch events and math for updating tubes, instead of clickable views
         root.setOnTouchListener { _, event ->
             if (event.action != MotionEvent.ACTION_DOWN)
                 return@setOnTouchListener false
 
-            val zoneFraction = 0.4f
-            val topZoneEnd = root.height * zoneFraction
+            val touchZoneHeight = root.height * 0.4f
+            val topZoneEnd = touchZoneHeight
             val bottomZoneStart = root.height - topZoneEnd
             val clickedTube = tubes.size - 1 - (event.x / tube0.width).toInt()
 
